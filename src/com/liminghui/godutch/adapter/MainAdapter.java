@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainAdapter extends BaseAdapter {
@@ -57,7 +58,7 @@ public class MainAdapter extends BaseAdapter {
 	public View getView(int arg0, View arg1, ViewGroup arg2) {
 		// TODO Auto-generated method stub
 		Holder holder;
-		if (arg1 != null) {
+		if (arg1 == null) {
 			LayoutInflater mInflater = LayoutInflater.from(context);
 			arg1 = mInflater.inflate(R.layout.main_body_item, null);
 			holder = new Holder();
@@ -72,6 +73,10 @@ public class MainAdapter extends BaseAdapter {
 		}
 
 		holder.iv_item_icon.setImageResource(images[arg0]);
+		/*LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(50, 50);
+		holder.iv_item_icon.setLayoutParams(layoutParams);*/
+		holder.iv_item_icon.setScaleType(ImageView.ScaleType.FIT_XY);
+		
 		holder.tv_item_name.setText(names[arg0]);
 
 		return arg1;
