@@ -6,5 +6,12 @@
     <string name="hello_world">Hello world!</string>
     <string name="top_title">AA费用小助手</string>
     <string name="bottom_welcome_info">欢迎使用AA小助手</string>
+    
+    <string name="gv_payout_add">记录消费</string>
+    <string name="gv_payout_query">查询消费</string>
+    <string name="gv_accountbook_manage">账本管理</string>
+    <string name="gv_statistics_manage">统计管理</string>
+    <string name="gv_category_manage">类别管理</string>
+    <string name="gv_user_manage">人员管理</string>
 
 </resources>

@@ -1,4 +1,6 @@
-package com.liminghui.godutch;
+package com.liminghui.godutch.activity;
+
+import com.liminghui.godutch.R;
 
 import android.os.Bundle;
 import android.app.Activity;
