@@ -6,11 +6,11 @@ import android.widget.Toast;
 
 public class BaseActivity extends Activity {
 	
-	protected void ShowMsg(String msg) {
+	protected void showMsg(String msg) {
 		Toast.makeText(this, msg, 1).show();
 	}
 	
-	protected void OpenActivity(Class<?> cls) {
+	protected void openActivity(Class<?> cls) {
 		Intent intent = new Intent();
 		intent.setClass(this, cls);
 		startActivity(intent);

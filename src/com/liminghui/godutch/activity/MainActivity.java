@@ -15,26 +15,26 @@ public class MainActivity extends FrameActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		AppendMainBody(R.layout.main_body);
-		InitVariable();
-		InitView();
-		InitListeners();
-		BindData();
+		appendMainBody(R.layout.main_body);
+		initVariable();
+		initView();
+		initListeners();
+		bindData();
 	}
 
-	private void InitVariable() {
+	private void initVariable() {
 		mMainAdapter = new MainAdapter(this);
 	}
 
-	private void InitView() {
+	private void initView() {
 		gv_main_body = (GridView) findViewById(R.id.gv_main_body);
 	}
 
-	private void InitListeners() {
+	private void initListeners() {
 
 	}
 
-	private void BindData() {
+	private void bindData() {
 		gv_main_body.setAdapter(mMainAdapter);
 	}
 
