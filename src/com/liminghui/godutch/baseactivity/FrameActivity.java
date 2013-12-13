@@ -19,7 +19,7 @@ public class FrameActivity extends Activity {
 		setContentView(R.layout.main);
 	}
 	
-	protected void AppendMainBody(int resId) {
+	protected void appendMainBody(int resId) {
 		LinearLayout linearLayout = (LinearLayout) findViewById(R.layout.main_body);
 		View view = LayoutInflater.from(this).inflate(resId, null);
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,RelativeLayout.LayoutParams.FILL_PARENT);
