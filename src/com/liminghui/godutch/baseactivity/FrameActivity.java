@@ -25,7 +25,7 @@ public class FrameActivity extends Activity {
 	}
 	
 	protected void appendMainBody(int resId) {
-		LinearLayout linearLayout = (LinearLayout) findViewById(R.layout.main_body);
+		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.lay_main_body);
 		View view = LayoutInflater.from(this).inflate(resId, null);
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,RelativeLayout.LayoutParams.FILL_PARENT);
 		linearLayout.addView(view, layoutParams);

@@ -57,7 +57,7 @@ public class SlideMenuView {
 	
 	private void close(){
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,68);
-		layoutParams.addRule(RelativeLayout.ABOVE);
+		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 		il_bottom_box.setLayoutParams(layoutParams);
 		isClosed = true;
 	}

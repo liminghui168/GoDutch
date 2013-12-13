@@ -3,11 +3,15 @@ package com.liminghui.godutch.activity;
 import com.liminghui.godutch.R;
 import com.liminghui.godutch.adapter.MainAdapter;
 import com.liminghui.godutch.baseactivity.FrameActivity;
+import com.liminghui.godutch.control.SlideMenuItem;
+import com.liminghui.godutch.control.SlideMenuView.OnSlideMenuItemListener;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.GridView;
+import android.widget.Toast;
 
-public class MainActivity extends FrameActivity {
+public class MainActivity extends FrameActivity implements OnSlideMenuItemListener {
 	
 	private GridView gv_main_body;
 	private MainAdapter mMainAdapter;
@@ -39,4 +43,12 @@ public class MainActivity extends FrameActivity {
 		gv_main_body.setAdapter(mMainAdapter);
 	}
 
+	@Override
+	public void MyOnItemClickListener(View view, SlideMenuItem item) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, item.getTitle(), 1).show();
+	}
+	
+	
+	
 }
