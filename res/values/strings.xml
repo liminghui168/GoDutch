@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AA费用小助手</string>
+    <string name="app_name">进销存Demo版</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="top_title">AA费用小助手</string>
-    <string name="bottom_welcome_info">欢迎使用AA小助手</string>
+    <string name="top_title">进销存Demo版</string>
+    <string name="bottom_welcome_info">欢迎观看进销存Demo版</string>
     
     <string name="gv_payout_add">记录消费</string>
     <string name="gv_payout_query">查询消费</string>

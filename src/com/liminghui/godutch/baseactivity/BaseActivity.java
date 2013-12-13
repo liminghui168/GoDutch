@@ -7,7 +7,7 @@ import android.widget.Toast;
 public class BaseActivity extends Activity {
 	
 	protected void showMsg(String msg) {
-		Toast.makeText(this, msg, 1).show();
+		Toast.makeText(this, msg, 0).show();
 	}
 	
 	protected void openActivity(Class<?> cls) {

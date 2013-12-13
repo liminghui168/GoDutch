@@ -46,7 +46,7 @@ public class MainActivity extends FrameActivity implements OnSlideMenuItemListen
 	@Override
 	public void MyOnItemClickListener(View view, SlideMenuItem item) {
 		// TODO Auto-generated method stub
-		Toast.makeText(this, item.getTitle(), 1).show();
+		Toast.makeText(this, item.getTitle(), 0).show();
 	}
 	
 	
