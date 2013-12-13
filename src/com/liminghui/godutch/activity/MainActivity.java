@@ -20,6 +20,7 @@ public class MainActivity extends FrameActivity {
 		initView();
 		initListeners();
 		bindData();
+		createSlideMenu(R.array.SlideMenuActivityMain);
 	}
 
 	private void initVariable() {
