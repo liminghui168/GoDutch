@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/stock_item_bg"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/tv_main_stock_body_brand"
+        style="@style/stock_item_text_style" />
+
+    <TextView
+        android:id="@+id/tv_main_stock_body_stock_code"
+        style="@style/stock_item_text_style" />
+
+    <TextView
+        android:id="@+id/tv_main_stock_body_vendor_modelNo"
+        style="@style/stock_item_text_style" />
+
+    <TextView
+        android:id="@+id/tv_main_stock_body_client_modelNo"
+        style="@style/stock_item_text_style" />
+
+</LinearLayout>

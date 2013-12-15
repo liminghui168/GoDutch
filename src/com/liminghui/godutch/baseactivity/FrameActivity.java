@@ -12,7 +12,7 @@ import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-public class FrameActivity extends Activity {
+public class FrameActivity extends BaseActivity {
 	
 	private SlideMenuView menuView;
 	

@@ -8,11 +8,14 @@ import com.liminghui.godutch.control.SlideMenuView.OnSlideMenuItemListener;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.Toast;
 
-public class MainActivity extends FrameActivity implements OnSlideMenuItemListener {
-	
+public class MainActivity extends FrameActivity implements
+		OnSlideMenuItemListener, OnItemClickListener {
+
 	private GridView gv_main_body;
 	private MainAdapter mMainAdapter;
 
@@ -36,7 +39,7 @@ public class MainActivity extends FrameActivity implements OnSlideMenuItemListen
 	}
 
 	private void initListeners() {
-
+		gv_main_body.setOnItemClickListener(this);
 	}
 
 	private void bindData() {
@@ -45,10 +48,19 @@ public class MainActivity extends FrameActivity implements OnSlideMenuItemListen
 
 	@Override
 	public void MyOnItemClickListener(View view, SlideMenuItem item) {
-		// TODO Auto-generated method stub
 		Toast.makeText(this, item.getTitle(), 0).show();
 	}
-	
-	
-	
+
+	// 主界面的GridView点击事件
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		String menuName = parent.getAdapter().getItem(position).toString();
+		if (menuName.equals(getString(R.string.gv_stock_manage))) {
+			//showMsg("aaa");
+			openActivity(StockActivity.class);
+			return;
+		}
+	}
+
 }

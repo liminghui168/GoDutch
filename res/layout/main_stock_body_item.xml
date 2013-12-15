@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#555555" >
+
+    <TextView
+        android:id="@+id/tv_main_stock_body_item"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_margin="1dp"
+        android:background="#D4D0C7"
+        android:bufferType="normal"
+        android:gravity="left"
+        android:singleLine="true"
+        android:text="test1"
+        android:textSize="18sp" />
+
+</LinearLayout>

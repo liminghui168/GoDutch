@@ -2,13 +2,13 @@
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
+            backward-compatibility can go here.
         -->
     </style>
 
@@ -22,6 +22,20 @@
         <item name="android:layout_height">fill_parent</item>
         <item name="android:divider">@drawable/divider</item>
         <item name="android:cacheColorHint">@color/transparent</item>
+    </style>
+
+    <style name="stock_item_text_style">
+        <item name="android:id">@+id/tv_main_stock_body_brand</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">top</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">#D4D0C7</item>
+        <item name="android:gravity">left</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:text">test1</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
 </resources>

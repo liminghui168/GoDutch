@@ -40,13 +40,13 @@ public class MainAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		return images.length;
+		return names.length;
 	}
 
 	@Override
 	public Object getItem(int arg0) {
 		// TODO Auto-generated method stub
-		return images[arg0];
+		return names[arg0];
 	}
 
 	@Override
