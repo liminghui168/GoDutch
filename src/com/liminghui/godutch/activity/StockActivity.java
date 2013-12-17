@@ -67,18 +67,24 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 		gv_stock_main_body_title = (GridView) findViewById(R.id.gv_stock_main_body_title);
 		lv_stock_main_body_list = (ListView) findViewById(R.id.lv_stock_main_body_list);
 		pb_stock_main_body = (ProgressBar) findViewById(R.id.pb_stock_main_body);
-		main_stock_body_more_view = (RelativeLayout) getLayoutInflater()
-				.inflate(R.layout.main_stock_body_more_view, null);
-		bt_move_view_text = (Button) main_stock_body_more_view
-				.findViewById(R.id.bt_move_view_text);
-		pb_move_view_load = (ProgressBar) main_stock_body_more_view
-				.findViewById(R.id.pb_move_view_load);
+
+		bt_move_view_text = (Button) findViewById(R.id.bt_move_view_text);
+		pb_move_view_load = (ProgressBar) findViewById(R.id.pb_move_view_load);
+
+		/*
+		 * main_stock_body_more_view = (RelativeLayout) getLayoutInflater()
+		 * .inflate(R.layout.main_stock_body_more_view, null); bt_move_view_text
+		 * = (Button) main_stock_body_more_view
+		 * .findViewById(R.id.bt_move_view_text); pb_move_view_load =
+		 * (ProgressBar) main_stock_body_more_view
+		 * .findViewById(R.id.pb_move_view_load);
+		 */
 
 		pageIndex = 1;
 		pageSize = 13;
 		list = new ArrayList<Stock>();
 		// 加入到底部
-		lv_stock_main_body_list.addFooterView(main_stock_body_more_view);
+		// lv_stock_main_body_list.addFooterView(main_stock_body_more_view);
 		handler = new Handler();
 
 		titleItems = new String[] { "Brand", "Stock Code",
@@ -92,7 +98,7 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 
 	private void initView() {
 		mAdapter = new StockAdapter(this);
-
+		setTopTitle(getString(R.string.gv_stock_manage));
 	}
 
 	private void initListeners() {
@@ -140,7 +146,7 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 				/*
 				 * ListView lv = (ListView) view; view.getScrollX()
 				 */
-				lastVisibleIndex = firstVisibleItem + visibleItemCount - 1;
+				lastVisibleIndex = firstVisibleItem + visibleItemCount;
 				// lv_stock_main_body_list.setSelection(count);
 				// lv_stock_main_body_list.setSelected(true);
 			}
@@ -167,7 +173,7 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 				bt_move_view_text.setEnabled(true);
 				// mAdapter.getList().clear();
 				// mAdapter.getList().addAll(list);
-				mAdapter.notifyDataSetChanged();
+
 				// setListViewPos(lastVisibleIndex);// 滚动到指定位置
 			}
 		}, 2000);
@@ -214,7 +220,12 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 				pb_stock_main_body.setVisibility(View.GONE);
 				parseJson(content);
 				mAdapter.setList(list);
-				bindData();
+				if (pageIndex == 2) {
+					bindData();
+				} else {
+					mAdapter.notifyDataSetChanged();
+				}
+
 				super.onSuccess(content);
 			}
 		});

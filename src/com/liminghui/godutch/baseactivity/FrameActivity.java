@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class FrameActivity extends BaseActivity {
 	
@@ -40,6 +41,11 @@ public class FrameActivity extends BaseActivity {
 		}
 		
 		menuView.bindData();
+	}
+	
+	protected void setTopTitle(String mTitle) {
+		TextView tv_top_title = (TextView) findViewById(R.id.tv_top_title);
+		tv_top_title.setText(mTitle);
 	}
 	
 }

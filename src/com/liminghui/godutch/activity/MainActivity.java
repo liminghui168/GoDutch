@@ -36,6 +36,7 @@ public class MainActivity extends FrameActivity implements
 
 	private void initView() {
 		gv_main_body = (GridView) findViewById(R.id.gv_main_body);
+		setTopTitle(getString(R.string.top_title));
 	}
 
 	private void initListeners() {
@@ -51,13 +52,13 @@ public class MainActivity extends FrameActivity implements
 		Toast.makeText(this, item.getTitle(), 0).show();
 	}
 
-	// Ö÷½çÃæµÄGridViewµã»÷ÊÂ¼þ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GridViewï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 		String menuName = parent.getAdapter().getItem(position).toString();
 		if (menuName.equals(getString(R.string.gv_stock_manage))) {
-			//showMsg("aaa");
+			// showMsg("aaa");
 			openActivity(StockActivity.class);
 			return;
 		}
