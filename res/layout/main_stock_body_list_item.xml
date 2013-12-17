@@ -6,6 +6,13 @@
     android:orientation="horizontal" >
 
     <TextView
+        
+        android:visibility="invisible"
+        android:id="@+id/tv_main_stock_body_id"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+    <TextView
         android:id="@+id/tv_main_stock_body_brand"
         style="@style/stock_item_text_style" />
 

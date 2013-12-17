@@ -20,4 +20,10 @@
         android:layout_below="@id/gv_stock_main_body_title" >
     </ListView>
 
+    <ProgressBar
+        android:id="@+id/pb_stock_main_body"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
 </RelativeLayout>
