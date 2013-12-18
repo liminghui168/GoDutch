@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -99,6 +100,7 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 	private void initView() {
 		mAdapter = new StockAdapter(this);
 		setTopTitle(getString(R.string.gv_stock_manage));
+		bt_move_view_text.setVisibility(View.GONE);
 	}
 
 	private void initListeners() {
@@ -111,19 +113,25 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 							int position, long id) {
 						TextView tv_main_stock_body_id = (TextView) view
 								.findViewById(R.id.tv_main_stock_body_id);
-						// String name = (String) mAdapter.getItem(position);
 						if (tv_main_stock_body_id != null) {
-							showMsg(tv_main_stock_body_id.getText() + "");
+							// showMsg(tv_main_stock_body_id.getText() + "");
+							Intent mIntent = new Intent();
+							mIntent.setClass(getApplicationContext(),
+									StockDetailActivity.class);
+							String stockId = tv_main_stock_body_id.getText()
+									.toString();
+							mIntent.putExtra("stockId",
+									Integer.parseInt(stockId));
+							startActivity(mIntent);
+							//openActivity(StockDetailActivity.class);
 						}
 
 					}
 				});
 
 		bt_move_view_text.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				onScrollLast();
 			}
 
@@ -143,12 +151,7 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem,
 					int visibleItemCount, int totalItemCount) {
-				/*
-				 * ListView lv = (ListView) view; view.getScrollX()
-				 */
 				lastVisibleIndex = firstVisibleItem + visibleItemCount;
-				// lv_stock_main_body_list.setSelection(count);
-				// lv_stock_main_body_list.setSelected(true);
 			}
 		});
 
@@ -171,42 +174,21 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 				bt_move_view_text.setVisibility(View.VISIBLE);
 				pb_move_view_load.setEnabled(true);
 				bt_move_view_text.setEnabled(true);
-				// mAdapter.getList().clear();
-				// mAdapter.getList().addAll(list);
-
-				// setListViewPos(lastVisibleIndex);// 滚动到指定位置
 			}
 		}, 2000);
 	}
 
 	private void bindData() {
 		lv_stock_main_body_list.setAdapter(mAdapter);
-	}
-
-	private void setListViewPos(int pos) {
-		if (android.os.Build.VERSION.SDK_INT >= 8) {
-			lv_stock_main_body_list.smoothScrollToPosition(pos);
-		} else {
-			lv_stock_main_body_list.setSelection(pos);
-		}
-		lv_stock_main_body_list.setSelected(true);
+		bt_move_view_text.setVisibility(View.VISIBLE);
 	}
 
 	private void loadStockGrid() {
 		getStockListService();
 		pageIndex++;
-		/*
-		 * if (count + 13 < total) { // 每次加载13条
-		 * 
-		 * } else {
-		 * 
-		 * }
-		 */
-
 	}
 
 	private void getStockListService() {
-
 		String path = getString(R.string.url_path) + "LoadList";
 		RequestParams params = new RequestParams();
 		params.put("pageIndex", pageIndex + "");
