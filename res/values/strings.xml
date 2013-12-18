@@ -13,5 +13,5 @@
     <string name="gv_category_manage">类别管理</string>
     <string name="gv_user_manage">人员管理</string>
 	<string name="gv_stock_manage">产品管理</string>
-	<string name="url_path">http://192.168.23.90/Stock/</string>
+	<string name="url_path">http://192.168.1.101/Stock/</string>
 </resources>
