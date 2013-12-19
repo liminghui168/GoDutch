@@ -10,295 +10,368 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/lay_stock_detail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
-
-            
+            android:layout_height="match_parent" >
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:gravity="right"
-                    android:orientation="vertical" >
+                    android:orientation="horizontal" >
 
-                    
-                    <TextView
-                        android:focusableInTouchMode="true"
-                        android:focusable="true"
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Stock Code" />
+                    <Button
+                        android:id="@+id/bt_stock_detail_add"
+                        style="@style/stock_detail_top_bt_style"
+                        android:text="Add"
+                        android:textSize="18sp" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Vendor Code" />
+                    <Button
+                        android:id="@+id/bt_stock_detail_edit"
+                        style="@style/stock_detail_top_bt_style"
+                        android:text="Edit"
+                        android:textSize="18sp" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Vendor Name" />
+                    <Button
+                        android:id="@+id/bt_stock_detail_delete"
+                        style="@style/stock_detail_top_bt_style"
+                        android:text="Delete"
+                        android:textSize="18sp" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Vendor&apos;s Model No." />
+                    <Button
+                        android:id="@+id/bt_stock_detail_save"
+                        style="@style/stock_detail_top_bt_style"
+                        android:text="Save"
+                        android:textSize="18sp" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:layout_height="145dp"
-                        android:text="Short Des" />
+                    <Button
+                        android:id="@+id/bt_stock_detail_undo"
+                        style="@style/stock_detail_top_bt_style"
+                        android:text="Undo"
+                        android:textSize="18sp" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Power" />
+                    <Button
+                        android:id="@+id/bt_stock_detail_refresh"
+                        style="@style/stock_detail_top_bt_style"
+                        android:text="Refresh"
+                        android:textSize="18sp" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Output Power(RMS)" />
-
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Output Power(PMPO)" />
+                    <Button
+                        android:id="@+id/bt_stock_detail_close"
+                        style="@style/stock_detail_top_bt_style"
+                        android:text="Close"
+                        android:textSize="18sp" />
                 </LinearLayout>
 
+                <View style="@style/view_devide_line_style" />
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="5sp"
-                    android:gravity="left"
-                    android:orientation="vertical" >
+                    android:orientation="horizontal" >
 
                     <LinearLayout
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
+                        android:layout_marginTop="5dp"
+                        android:gravity="right"
+                        android:orientation="vertical" >
 
-                        <EditText
-                            android:id="@+id/et_stock_detail_stock_code"
-                            style="@style/stock_detail_text_et_style"
-                            android:layout_width="200dp" />
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:text="Stock Code" />
 
-                        <CheckBox
-                            android:id="@+id/cb_stock_detail_active"
-                            android:layout_width="wrap_content"
-                            android:layout_height="40sp"
-                            android:layout_marginLeft="5dp"
-                            android:text="Active" />
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Vendor Code" />
+
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:layout_height="85dp"
+                            android:text="Vendor Name" />
+
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Vendor&apos;s Model No." />
+
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:layout_height="145dp"
+                            android:text="Description" />
+
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:layout_height="87dp"
+                            android:text="Short Des" />
+
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Power" />
+
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Output Power(RMS)" />
+
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Output Power(PMPO)" />
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="5sp"
+                        android:gravity="left"
+                        android:orientation="vertical" >
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" >
+
+                            <EditText
+                                android:id="@+id/et_stock_detail_stock_code"
+                                style="@style/stock_detail_text_et_style"
+                                android:layout_width="200dp" />
+
+                            <CheckBox
+                                android:id="@+id/cb_stock_detail_active"
+                                android:layout_width="wrap_content"
+                                android:layout_height="40sp"
+                                android:layout_marginLeft="5dp"
+                                android:enabled="false"
+                                android:text="Active" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" >
+
+                            <EditText
+                                android:id="@+id/et_stock_detail_vendor_code"
+                                style="@style/stock_detail_text_et_style"
+                                android:layout_width="200dp" />
+
+                            <Button
+                                android:id="@+id/bt_stock_detail_find_vendor"
+                                android:layout_width="wrap_content"
+                                android:layout_height="40sp"
+                                android:layout_marginLeft="5dp"
+                                android:text="Find Vendor" />
+                        </LinearLayout>
 
                         <EditText
-                            android:id="@+id/et_stock_detail_vendor_code"
+                            android:id="@+id/et_stock_detail_vendor_name"
                             style="@style/stock_detail_text_et_style"
-                            android:layout_width="200dp" />
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:gravity="top"
+                            android:lines="3" />
 
-                        <Button
-                            android:id="@+id/bt_stock_detail_find_vendor"
-                            android:layout_width="wrap_content"
-                            android:layout_height="40sp"
-                            android:layout_marginLeft="5dp"
-                            android:text="Find Vendor" />
+                        <EditText
+                            android:id="@+id/et_stock_detail_vendor_model_no"
+                            style="@style/stock_detail_text_et_style" />
+
+                        <EditText
+                            android:id="@+id/et_stock_detail_des"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:gravity="top"
+                            android:lines="6" />
+
+                        <EditText
+                            android:id="@+id/et_stock_detail_short_des"
+                            style="@style/stock_detail_text_et_style"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:gravity="top"
+                            android:lines="3" />
+
+                        <EditText
+                            android:id="@+id/et_stock_detail_power_RMS"
+                            style="@style/stock_detail_text_et_style" />
+
+                        <EditText
+                            android:id="@+id/et_stock_detail_output_power_RMS"
+                            style="@style/stock_detail_text_et_style" />
+
+                        <EditText
+                            android:id="@+id/et_stock_detail_output_power_PMPO"
+                            style="@style/stock_detail_text_et_style" />
                     </LinearLayout>
 
-                    <EditText
-                        android:id="@+id/et_stock_detail_vendor_name"
-                        style="@style/stock_detail_text_et_style" />
-
-                    <EditText
-                        android:id="@+id/et_stock_detail_vendor_model_no"
-                        style="@style/stock_detail_text_et_style" />
-
-                    <EditText
-                        android:id="@+id/et_stock_detail_short_des"
-                        android:layout_width="fill_parent"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:gravity="top"
-                        android:lines="6" />
+                        android:layout_marginLeft="20sp"
+                        android:layout_marginTop="5sp"
+                        android:gravity="right"
+                        android:orientation="vertical" >
 
-                    <EditText
-                        android:id="@+id/et_stock_detail_power_RMS"
-                        style="@style/stock_detail_text_et_style" />
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Client&apos;s Model No." />
 
-                    <EditText
-                        android:id="@+id/et_stock_detail_output_power_RMS"
-                        style="@style/stock_detail_text_et_style" />
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Unit" />
 
-                    <EditText
-                        android:id="@+id/et_stock_detail_output_power_PMPO"
-                        style="@style/stock_detail_text_et_style" />
-                </LinearLayout>
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Unit Price" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20sp"
-                    android:layout_marginTop="5sp"
-                    android:gravity="right"
-                    android:orientation="vertical" >
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Ref.Cost" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Client&apos;s Model No." />
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="First Date" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Unit" />
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Brand" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Unit Price" />
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Category" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Ref.Cost" />
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Gift Box Barcode" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="First Date" />
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Carton Box Barcode" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Brand" />
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Product Barcode" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Category" />
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="Class" />
 
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Gift Box Barcode" />
-
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Carton Box Barcode" />
-
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Product Barcode" />
-
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="Class" />
-
-                    <TextView
-                        style="@style/stock_detail_text_tv_style"
-                        android:text="SubClass" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="5sp"
-                    android:gravity="left"
-                    android:orientation="vertical" >
-
-                    <EditText
-                        android:id="@+id/et_stock_detail_client_model_no"
-                        style="@style/stock_detail_text_et_style"
-                        android:layout_width="fill_parent"
-                        android:enabled="false" />
-
-                    <Spinner
-                        android:id="@+id/sp_stock_detail_unit"
-                        android:layout_width="fill_parent"
-                        android:layout_height="40sp"
-                         />
+                        <TextView
+                            style="@style/stock_detail_text_tv_style"
+                            android:text="SubClass" />
+                    </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="5sp"
+                        android:gravity="left"
+                        android:orientation="vertical" >
+
+                        <EditText
+                            android:id="@+id/et_stock_detail_client_model_no"
+                            style="@style/stock_detail_text_et_style"
+                            android:layout_width="fill_parent"
+                            android:enabled="false" />
 
                         <Spinner
-                            android:id="@+id/sp_stock_detail_unit_price"
-                            android:layout_width="120dp"
-                            android:layout_height="40sp"
-                             />
+                            android:id="@+id/sp_stock_detail_unit"
+                            android:layout_width="fill_parent"
+                            android:layout_height="40sp" />
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" >
+
+                            <Spinner
+                                android:id="@+id/sp_stock_detail_unit_price"
+                                android:layout_width="120dp"
+                                android:layout_height="40sp" />
+
+                            <EditText
+                                android:id="@+id/et_stock_detail_unit_price"
+                                android:layout_width="fill_parent"
+                                android:layout_height="40sp"
+                                android:enabled="false"
+                                android:inputType="numberDecimal" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" >
+
+                            <Spinner
+                                android:id="@+id/sp_stock_detail_ref_cost"
+                                android:layout_width="120dp"
+                                android:layout_height="40sp" />
+
+                            <EditText
+                                android:id="@+id/et_stcok_detail_ref_cost"
+                                android:layout_width="fill_parent"
+                                android:layout_height="40sp"
+                                android:enabled="false"
+                                android:inputType="numberDecimal" />
+                        </LinearLayout>
 
                         <EditText
-                            android:id="@+id/et_stock_detail_unit_price"
+                            android:id="@+id/et_stock_detail_first_date"
                             android:layout_width="fill_parent"
                             android:layout_height="40sp"
                             android:enabled="false"
-                            android:inputType="numberDecimal" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
+                            android:inputType="date" />
 
                         <Spinner
-                            android:id="@+id/sp_stock_detail_ref_cost"
-                            android:layout_width="120dp"
-                            android:layout_height="40sp"
-                             />
+                            android:id="@+id/sp_stock_detail_brand"
+                            style="@style/stock_detail_text_et_right_style" />
+
+                        <Spinner
+                            android:id="@+id/sp_stock_detail_category"
+                            style="@style/stock_detail_text_et_right_style" />
 
                         <EditText
-                            android:id="@+id/et_stcok_detail_ref_cost"
-                            android:layout_width="fill_parent"
-                            android:layout_height="40sp"
-                            android:enabled="false"
-                            android:inputType="numberDecimal" />
+                            android:id="@+id/et_stock_detail_gift"
+                            style="@style/stock_detail_text_et_right_style"
+                            android:enabled="false" />
+
+                        <EditText
+                            android:id="@+id/et_stock_detail_carton"
+                            style="@style/stock_detail_text_et_right_style"
+                            android:enabled="false" />
+
+                        <EditText
+                            android:id="@+id/et_stock_detail_product"
+                            style="@style/stock_detail_text_et_right_style"
+                            android:enabled="false" />
+
+                        <Spinner
+                            android:id="@+id/sp_stock_detail_class"
+                            style="@style/stock_detail_text_et_right_style" />
+
+                        <Spinner
+                            android:id="@+id/sp_stock_detail_sub_class"
+                            style="@style/stock_detail_text_et_right_style" />
                     </LinearLayout>
-
-                    <EditText
-                        android:id="@+id/et_stock_detail_first_date"
-                        android:layout_width="fill_parent"
-                        android:layout_height="40sp"
-                        android:enabled="false"
-                        android:inputType="date" />
-
-                    <Spinner
-                        android:id="@+id/sp_stock_detail_brand"
-                        style="@style/stock_detail_text_et_right_style"
-                         />
-
-                    <Spinner
-                        android:id="@+id/sp_stock_detail_category"
-                        style="@style/stock_detail_text_et_right_style"
-                        />
-
-                    <EditText
-                        android:id="@+id/et_stock_detail_gift"
-                        style="@style/stock_detail_text_et_right_style"
-                        android:enabled="false" />
-
-                    <EditText
-                        android:id="@+id/et_stock_detail_carton"
-                        style="@style/stock_detail_text_et_right_style"
-                        android:enabled="false" />
-
-                    <EditText
-                        android:id="@+id/et_stock_detail_product"
-                        style="@style/stock_detail_text_et_right_style"
-                        android:enabled="false" />
-
-                    <Spinner
-                        android:id="@+id/sp_stock_detail_class"
-                        style="@style/stock_detail_text_et_right_style"
-                         />
-
-                    <Spinner
-                        android:id="@+id/sp_stock_detail_sub_class"
-                        style="@style/stock_detail_text_et_right_style"
-                       />
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/pb_stock_detail_loading"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="210dp"
+                android:visibility="gone" />
+        </RelativeLayout>
     </ScrollView>
     <!-- 第二个页面 -->
 

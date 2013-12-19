@@ -2,13 +2,12 @@ package com.liminghui.godutch.domain;
 
 public class Stock {
 	private int Id;
-	private String stock;
+	private String stock1;
 	private String vref;
 	private String partno;
 	private String barcode;
 	private boolean acvite;
 	private String serialno;
-	
 
 	private String maincate;
 	private String des;
@@ -67,15 +66,14 @@ public class Stock {
 		Id = id;
 	}
 
-	public String getStock() {
-		return stock;
+	public String getStock1() {
+		return stock1;
 	}
 
-	public void setStock(String stock) {
-		this.stock = stock;
+	public void setStock1(String stock) {
+		this.stock1 = stock;
 	}
 
-	
 	public String getVref() {
 		return vref;
 	}
@@ -83,7 +81,7 @@ public class Stock {
 	public void setVref(String vref) {
 		this.vref = vref;
 	}
-	
+
 	public String getPartno() {
 		return partno;
 	}
@@ -98,6 +96,10 @@ public class Stock {
 
 	public void setBarcode(String barcode) {
 		this.barcode = barcode;
+	}
+
+	public boolean getAcvite() {
+		return acvite;
 	}
 
 	public boolean isAcvite() {

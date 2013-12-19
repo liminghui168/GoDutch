@@ -84,7 +84,7 @@ public class StockAdapter extends BaseAdapter {
 		Stock stock = list.get(position);
 		holder.tv_main_stock_body_id.setText(stock.getId() + "");
 		holder.tv_main_stock_body_brand.setText(stock.getBrand());
-		holder.tv_main_stock_body_stock_code.setText(stock.getStock());
+		holder.tv_main_stock_body_stock_code.setText(stock.getStock1());
 		holder.tv_main_stock_body_vendor_modelNo.setText(stock.getVref());
 		holder.tv_main_stock_body_client_modelNo.setText(stock.getPartno());
 		return convertView;

@@ -123,7 +123,7 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 							mIntent.putExtra("stockId",
 									Integer.parseInt(stockId));
 							startActivity(mIntent);
-							//openActivity(StockDetailActivity.class);
+							// openActivity(StockDetailActivity.class);
 						}
 
 					}
@@ -145,6 +145,7 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 						&& lastVisibleIndex == mAdapter.getCount()) {
 					// 当滑倒底部的时候自动加载
 					onScrollLast();
+
 				}
 			}
 
@@ -206,6 +207,7 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 					bindData();
 				} else {
 					mAdapter.notifyDataSetChanged();
+					lv_stock_main_body_list.setSelection((mAdapter.getCount() / 2) - 5);
 				}
 
 				super.onSuccess(content);
@@ -230,7 +232,7 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 				JSONObject obj = (JSONObject) jsonArray.opt(i);
 				Stock stock = new Stock();
 				stock.setId(obj.getInt("Id"));
-				stock.setStock(obj.getString("stock1"));
+				stock.setStock1(obj.getString("stock1"));
 				stock.setBrand(obj.getString("brand"));
 				stock.setVref(obj.getString("vref"));
 				stock.setPartno(obj.getString("partno"));
