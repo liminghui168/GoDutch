@@ -6,7 +6,9 @@
     <drawable name="red">#7f00</drawable>
     <drawable name="blue">#ffdee7f7</drawable>
     <drawable name="orange">#00000000</drawable>
-
+    
+    <color name="lv_normal">#D4D0C7</color>
+    <color name="green">#00ff00</color>
     <color name="color_ff6f84a3">#ff6f84a3</color>
     <color name="transparent">#00000000</color>
     <color name="black">#000000</color>

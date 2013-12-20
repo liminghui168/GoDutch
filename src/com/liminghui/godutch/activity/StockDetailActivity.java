@@ -1,5 +1,11 @@
 package com.liminghui.godutch.activity;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,11 +13,21 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.app.TabActivity;
+import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,6 +36,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TabHost;
@@ -33,16 +50,34 @@ import com.liminghui.godutch.utility.JSONHelper;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.loopj.android.image.SmartImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class StockDetailActivity extends TabActivity implements OnClickListener {
 
+	protected static final int REQ_CODE_CAMERA = 100;
+
+	protected static final int REQ_CODE_PICTURE = 200;
+
 	private TabHost mTabHost;
+
+	private final int DETAIL = 1;
+	private final int FIRST = 2;
+	private final int PREVIOUS = 3;
+	private final int NEXT = 4;
+	private final int LAST = 5;
+	private final int DELETE = 6;
 
 	private Button bt_stock_detail_add;
 	private Button bt_stock_detail_edit;
 	private Button bt_stock_detail_delete;
 	private Button bt_stock_detail_save;
 	private Button bt_stock_detail_undo;
+	private Button bt_stock_detail_first;
+	private Button bt_stock_detail_pre;
+	private Button bt_stock_detail_next;
+	private Button bt_stock_detail_last;
+
 	private Button bt_stock_detail_refresh;
 	private Button bt_stock_detail_close;
 
@@ -75,6 +110,10 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	private Spinner sp_stock_detail_class;
 	private Spinner sp_stock_detail_sub_class;
 
+	private SmartImageView iv_stock_detail_viewer;
+	private Button bt_stock_detail_upload_img;
+	private Button bt_stock_detail_select_img;
+
 	private String[] unitArr;// Unit数组
 	private String[] unitPriceArr;// Unit Price数组
 	private String[] refCostArr;// Ref.Cost数组
@@ -84,8 +123,9 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	private String[] subClassArr; // SubClass数组
 	private int stockId;
 	private Stock mStock;
+	private Bitmap bmp;
 
-	private boolean isAdd; // 是否为添加
+	private boolean isAdd; // 是否为添加，true为添加
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +133,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		// setContentView(R.layout.stock_detail);
 		initView();
 		initVariable();
+		setControlStatus(false);
 		bindData();
 
 		// 获取从StockActivity传过来的值
@@ -101,7 +142,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 
 		pb_stock_detail_loading.setVisibility(View.VISIBLE);
 
-		getStockDetail();
+		getStockService(DETAIL);
 		initTopBtnStatus();
 		initListeners();
 	}
@@ -125,7 +166,21 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 
 		TabWidget tabWidget = mTabHost.getTabWidget();
 		for (int i = 0; i < tabWidget.getChildCount(); i++) {
-			tabWidget.getChildAt(i).getLayoutParams().height = 60;
+			RelativeLayout tabView = (RelativeLayout) mTabHost.getTabWidget()
+					.getChildAt(i);
+
+			TextView text = (TextView) tabWidget.getChildAt(i).findViewById(
+					android.R.id.title);
+			text.setTextSize(18);
+
+			// 文字居中
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) text
+					.getLayoutParams();
+			params.width = RelativeLayout.LayoutParams.MATCH_PARENT;
+			params.height = RelativeLayout.LayoutParams.MATCH_PARENT;
+			text.setLayoutParams(params);
+			text.setGravity(Gravity.CENTER);
+
 		}
 
 	}
@@ -150,6 +205,11 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		bt_stock_detail_delete = (Button) findViewById(R.id.bt_stock_detail_delete);
 		bt_stock_detail_save = (Button) findViewById(R.id.bt_stock_detail_save);
 		bt_stock_detail_undo = (Button) findViewById(R.id.bt_stock_detail_undo);
+		bt_stock_detail_first = (Button) findViewById(R.id.bt_stock_detail_first);
+		bt_stock_detail_pre = (Button) findViewById(R.id.bt_stock_detail_pre);
+		bt_stock_detail_next = (Button) findViewById(R.id.bt_stock_detail_next);
+		bt_stock_detail_last = (Button) findViewById(R.id.bt_stock_detail_last);
+
 		bt_stock_detail_refresh = (Button) findViewById(R.id.bt_stock_detail_refresh);
 		bt_stock_detail_close = (Button) findViewById(R.id.bt_stock_detail_close);
 
@@ -180,6 +240,10 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		et_stock_detail_product = (EditText) findViewById(R.id.et_stock_detail_product);
 		sp_stock_detail_class = (Spinner) findViewById(R.id.sp_stock_detail_class);
 		sp_stock_detail_sub_class = (Spinner) findViewById(R.id.sp_stock_detail_sub_class);
+
+		iv_stock_detail_viewer = (SmartImageView) findViewById(R.id.iv_stock_detail_viewer);
+		bt_stock_detail_upload_img = (Button) findViewById(R.id.bt_stock_detail_upload_img);
+		bt_stock_detail_select_img = (Button) findViewById(R.id.bt_stock_detail_select_img);
 	}
 
 	/**
@@ -191,43 +255,152 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		bt_stock_detail_delete.setOnClickListener(this);
 		bt_stock_detail_save.setOnClickListener(this);
 		bt_stock_detail_undo.setOnClickListener(this);
+		bt_stock_detail_first.setOnClickListener(this);
+		bt_stock_detail_pre.setOnClickListener(this);
+		bt_stock_detail_next.setOnClickListener(this);
+		bt_stock_detail_last.setOnClickListener(this);
+
 		bt_stock_detail_refresh.setOnClickListener(this);
 		bt_stock_detail_close.setOnClickListener(this);
+		bt_stock_detail_upload_img.setOnClickListener(this);
+		bt_stock_detail_select_img.setOnClickListener(this);
 	}
 
+	/**
+	 * 顶部按钮的点击事件
+	 */
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.bt_stock_detail_add:
+		case R.id.bt_stock_detail_add: // 添加
 			isAdd = true;
 			setTopBtnInEdit();
 			setControlTextForEmpty();
+			setControlStatus(true);
 			break;
-		case R.id.bt_stock_detail_edit:
+		case R.id.bt_stock_detail_edit: // 修改
 			isAdd = false;
 			setTopBtnInEdit();
 			setControlStatus(true);
 			break;
-		case R.id.bt_stock_detail_delete:
-
+		case R.id.bt_stock_detail_delete: // 删除
+			shwoDeleteDialog();
 			break;
-		case R.id.bt_stock_detail_save:
+		case R.id.bt_stock_detail_save: // 保存
 			Stock s = getControlText();
 			String json = JSONHelper.toJSON(s);
-			saveStockDetail(json);
+			showConfirmDialog(json);
+			break;
+		case R.id.bt_stock_detail_undo: // 撤销
+			showCancelDialog();
+			break;
+		case R.id.bt_stock_detail_first: // 第一条
+			getStockService(FIRST);
+			break;
+		case R.id.bt_stock_detail_pre: // 上一条
+			getStockService(PREVIOUS);
+			break;
+		case R.id.bt_stock_detail_next: // 下一条
+			getStockService(NEXT);
+			break;
+		case R.id.bt_stock_detail_last: // 最后一条
+			getStockService(LAST);
+			break;
 
+		case R.id.bt_stock_detail_refresh: // 刷新
+			getStockService(DETAIL);
 			break;
-		case R.id.bt_stock_detail_undo:
-			initTopBtnStatus();
-			setControlStatus(false);
-			break;
-		case R.id.bt_stock_detail_refresh:
-
-			break;
-		case R.id.bt_stock_detail_close:
+		case R.id.bt_stock_detail_close: // 关闭
 			finish();
 			break;
+		case R.id.bt_stock_detail_select_img:// 选择图片
+			selectLoactionImg();
+			break;
+		case R.id.bt_stock_detail_upload_img: // 上传图片
+			uploadImgService();
+			break;
 		}
+	}
+
+	private void uploadImgService() {
+		if (isAdd) {
+			return;
+		} else {
+			byte[] buff = null;
+			iv_stock_detail_viewer.setDrawingCacheEnabled(true);
+			Bitmap bitmap = iv_stock_detail_viewer.getDrawingCache();
+			//TODO:上传图片，处理流
+			
+		}
+	}
+	
+	public InputStream Bitmap2InputStream(Bitmap bm)
+	{
+	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+	    InputStream is = new ByteArrayInputStream(baos.toByteArray());
+	    return is;
+	}
+
+	/**
+	 * 选择图片
+	 */
+	private void selectLoactionImg() {
+		new AlertDialog.Builder(this)
+				.setTitle("选择图片")
+				.setItems(R.array.gallery_camera_icon,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								switch (which) {
+								case 0: // 拍照
+									Intent i = new Intent(
+											MediaStore.ACTION_IMAGE_CAPTURE);
+									startActivityForResult(i, REQ_CODE_CAMERA);
+									break;
+								case 1: // 选择本地图片
+									Intent intent = new Intent(
+											Intent.ACTION_GET_CONTENT);
+									intent.addCategory(Intent.CATEGORY_OPENABLE);
+									intent.setType("image/*");
+									startActivityForResult(Intent
+											.createChooser(intent, "选择图片"),
+											REQ_CODE_PICTURE);
+
+									break;
+								}
+							}
+						}).create().show();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+			case REQ_CODE_CAMERA:// 拍照
+				Bitmap camerabmp = (Bitmap) data.getExtras().get("data");
+				iv_stock_detail_viewer.setImageBitmap(camerabmp);
+				break;
+			case REQ_CODE_PICTURE:// 选择本地图片
+				// 选择图片
+				Uri uri = data.getData();
+				ContentResolver cr = this.getContentResolver();
+				try {
+					if (bmp != null)// 如果不释放的话，不断取图片，将会内存不够
+						bmp.recycle();
+					bmp = BitmapFactory.decodeStream(cr.openInputStream(uri));
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				iv_stock_detail_viewer.setImageBitmap(bmp);
+				break;
+			}
+
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	/**
@@ -300,9 +473,12 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		s.setPartno(et_stock_detail_vendor_model_no.getText().toString().trim());
 		s.setDes(et_stock_detail_des.getText().toString().trim());
 		s.setShortdes(et_stock_detail_short_des.getText().toString().trim());
-		s.setOpowerrms(et_stock_detail_power_RMS.getText().toString().trim());
+		s.setPower(et_stock_detail_power_RMS.getText().toString().trim());
+		s.setOpowerrms(et_stock_detail_output_power_RMS.getText().toString()
+				.trim());
 		s.setOpowerpmpo(et_stock_detail_output_power_PMPO.getText().toString()
 				.trim());
+
 		s.setVref(et_stock_detail_client_model_no.getText().toString().trim());
 		s.setUnit(sp_stock_detail_unit.getSelectedItem().toString().trim());
 		s.setPricecurr(sp_stock_detail_unit_price.getSelectedItem().toString()
@@ -465,8 +641,31 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		bt_stock_detail_delete.setEnabled(true);
 		bt_stock_detail_save.setEnabled(false);
 		bt_stock_detail_undo.setEnabled(false);
+		bt_stock_detail_first.setEnabled(true);
+		bt_stock_detail_pre.setEnabled(true);
+		bt_stock_detail_next.setEnabled(true);
+		bt_stock_detail_last.setEnabled(true);
 		bt_stock_detail_refresh.setEnabled(true);
 		bt_stock_detail_close.setEnabled(true);
+	}
+
+	/**
+	 * 设置顶部控件的全部状态
+	 * 
+	 * @param flag
+	 */
+	private void setTopBtnToFalse(boolean flag) {
+		bt_stock_detail_add.setEnabled(flag);
+		bt_stock_detail_edit.setEnabled(flag);
+		bt_stock_detail_delete.setEnabled(flag);
+		bt_stock_detail_save.setEnabled(flag);
+		bt_stock_detail_undo.setEnabled(flag);
+		bt_stock_detail_first.setEnabled(flag);
+		bt_stock_detail_pre.setEnabled(flag);
+		bt_stock_detail_next.setEnabled(flag);
+		bt_stock_detail_last.setEnabled(flag);
+		bt_stock_detail_refresh.setEnabled(flag);
+		bt_stock_detail_close.setEnabled(flag);
 	}
 
 	/**
@@ -478,24 +677,161 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		bt_stock_detail_delete.setEnabled(false);
 		bt_stock_detail_save.setEnabled(true);
 		bt_stock_detail_undo.setEnabled(true);
+		bt_stock_detail_first.setEnabled(false);
+		bt_stock_detail_pre.setEnabled(false);
+		bt_stock_detail_next.setEnabled(false);
+		bt_stock_detail_last.setEnabled(false);
 		bt_stock_detail_refresh.setEnabled(false);
 		bt_stock_detail_close.setEnabled(false);
 	}
 
 	/**
+	 * 弹出确认对话框
+	 */
+	private void showConfirmDialog(final String json) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("提示信息");
+		builder.setMessage("确认要保存吗？");
+		builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				saveStockDetail(json);
+				dialog.dismiss();
+			}
+		});
+		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		builder.show();
+	}
+
+	/**
+	 * 弹出删除对话框
+	 */
+	private void shwoDeleteDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("提示信息");
+		builder.setMessage("确认要取消吗？");
+		builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				getStockService(DELETE);
+			}
+		});
+		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				/*
+				 * if (isAdd) { initTopBtnStatus(); getStockService(DETAIL); }
+				 */
+				dialog.dismiss();
+			}
+		});
+		builder.show();
+	}
+
+	/**
+	 * 弹出取消对话框
+	 */
+	private void showCancelDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("提示信息");
+		builder.setMessage("确认要取消吗？");
+		builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				initTopBtnStatus();
+				if (isAdd) {
+					getStockService(DETAIL);
+				}
+				setControlStatus(false);
+
+				dialog.dismiss();
+			}
+		});
+		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				/*
+				 * if (isAdd) { initTopBtnStatus(); getStockService(DETAIL); }
+				 */
+				dialog.dismiss();
+			}
+		});
+		builder.show();
+	}
+
+	/**
 	 * 获取远程服务StockDetail
 	 */
-	private void getStockDetail() {
+	private void getStockService(int loadFlag) {
 		String path = getString(R.string.url_path) + "LoadStockDetail/"
 				+ stockId;
+
+		switch (loadFlag) {
+		case DETAIL:// 获取详细
+			path = getString(R.string.url_path) + "LoadStockDetail/" + stockId;
+			break;
+
+		case FIRST:// 第一条
+			path = getString(R.string.url_path) + "LoadStockDetailFirst";
+			break;
+
+		case PREVIOUS:// 上一条
+			path = getString(R.string.url_path) + "LoadStockDetailPre/"
+					+ stockId;
+			break;
+
+		case NEXT:// 下一条
+			path = getString(R.string.url_path) + "LoadStockDetailNext/"
+					+ stockId;
+			break;
+
+		case LAST:// 最后一条
+			path = getString(R.string.url_path) + "LoadStockDetailLast";
+			break;
+
+		case DELETE:// 删除
+			path = getString(R.string.url_path) + "LoadStockDetailLast";
+			break;
+		}
+
 		AsyncHttpClient client = new AsyncHttpClient();
+		client.setTimeout(30000);
+		int visibility = pb_stock_detail_loading.getVisibility();
+		if (visibility == View.GONE) {
+			pb_stock_detail_loading.setVisibility(View.VISIBLE);
+		}
 
 		client.get(path, new AsyncHttpResponseHandler() {
 
 			@Override
+			public void onFailure(Throwable error, String content) {
+				Toast.makeText(getApplicationContext(), "Loading Error", 0)
+						.show();
+				pb_stock_detail_loading.setVisibility(View.GONE);
+				super.onFailure(error, content);
+			}
+
+			@Override
 			public void onSuccess(String content) {
-				if (content == "null") {
+				if ("null".equals(content)) {
 					// 数据为空
+				} else if ("isFirst".equals(content)) {
+					Toast.makeText(getApplicationContext(), "已经是第一条！", 0)
+							.show();
+				} else if ("isLast".equals(content)) {
+					Toast.makeText(getApplicationContext(), "已经是最后一条！", 0)
+							.show();
+				} else if ("ok".equals(content)) {
+					Toast.makeText(getApplicationContext(), "删除成功！", 0).show();
+					getStockService(NEXT);
 				} else {
 					parseJson(content);
 					setControlTextForEntity();
@@ -519,8 +855,20 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		AsyncHttpClient client = new AsyncHttpClient();
 		RequestParams params = new RequestParams();
 		params.put("stockJson", json);
-
+		client.setTimeout(30000);
+		setTopBtnToFalse(false);// 设置顶部按钮全部不可用
+		setControlStatus(false);// 设置文本框全部不可用
 		client.post(url, params, new AsyncHttpResponseHandler() {
+
+			@Override
+			public void onFailure(Throwable error, String content) {
+				initTopBtnStatus();
+				getStockService(DETAIL);
+				Toast.makeText(getApplicationContext(), "Edit Error", 0).show();
+				pb_stock_detail_loading.setVisibility(View.GONE);
+				super.onFailure(error, content);
+
+			}
 
 			@Override
 			public void onSuccess(String content) {
@@ -547,6 +895,13 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		return df.format(new Date());// new Date()为获取当前系统时间
 	}
 
+	private String convertNullToEmpty(String text) {
+		if ("null".equals(text) || text == null) {
+			return "";
+		}
+		return text;
+	}
+
 	/**
 	 * 转换Json
 	 * 
@@ -556,33 +911,48 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		try {
 			JSONObject jsonObject = new JSONObject(json);
 			mStock.setId(jsonObject.getInt("Id"));
-			mStock.setStock1(jsonObject.getString("stock1"));
-			mStock.setVendor(jsonObject.getString("vendor"));
-			mStock.setVendorname(jsonObject.getString("vendorname"));
-			mStock.setVref(jsonObject.getString("vref"));
-			mStock.setDes(jsonObject.getString("des"));
-			mStock.setShortdes(jsonObject.getString("shortdes"));
-			mStock.setPower(jsonObject.getString("power"));
-			mStock.setOpowerrms(jsonObject.getString("opowerrms"));
-			mStock.setOpowerpmpo(jsonObject.getString("opowerpmpo"));
-			mStock.setPartno(jsonObject.getString("partno"));
-			mStock.setUnit(jsonObject.getString("unit"));
-			mStock.setPricecurr(jsonObject.getString("pricecurr"));
+			stockId = mStock.getId();
+			mStock.setStock1(convertNullToEmpty(jsonObject.getString("stock1")));
+			mStock.setVendor(convertNullToEmpty(jsonObject.getString("vendor")));
+			mStock.setVendorname(convertNullToEmpty(jsonObject
+					.getString("vendorname")));
+			mStock.setVref(convertNullToEmpty(jsonObject.getString("vref")));
+			mStock.setDes(convertNullToEmpty(jsonObject.getString("des")));
+			mStock.setShortdes(convertNullToEmpty(jsonObject
+					.getString("shortdes")));
+			mStock.setPower(convertNullToEmpty(jsonObject.getString("power")));
+			mStock.setOpowerrms(convertNullToEmpty(jsonObject
+					.getString("opowerrms")));
+			mStock.setOpowerpmpo(convertNullToEmpty(jsonObject
+					.getString("opowerpmpo")));
+			mStock.setPartno(convertNullToEmpty(jsonObject.getString("partno")));
+			mStock.setUnit(convertNullToEmpty(jsonObject.getString("unit")));
+			mStock.setPricecurr(convertNullToEmpty(jsonObject
+					.getString("pricecurr")));
 			mStock.setPrice(jsonObject.getDouble("price"));
-			mStock.setCostcurr(jsonObject.getString("costcurr"));
+			mStock.setCostcurr(convertNullToEmpty(jsonObject
+					.getString("costcurr")));
 			mStock.setCost(jsonObject.getDouble("cost"));
-			mStock.setCreatedate(jsonObject.getString("createdata"));
-			mStock.setPricecurr(jsonObject.getString("pricecurr"));
-			mStock.setBrand(jsonObject.getString("brand"));
-			mStock.setCategory(jsonObject.getString("category"));
-			mStock.setGbbarcode(jsonObject.getString("gbbarcode"));
-			mStock.setOcbarcode(jsonObject.getString("ocbarcode"));
-			mStock.setPbarcode(jsonObject.getString("pbarcode"));
-			mStock.setSclass(jsonObject.getString("sclass"));
-			mStock.setSubclass(jsonObject.getString("subclass"));
+			mStock.setCreatedate(convertNullToEmpty(jsonObject
+					.getString("createdata")));
+			mStock.setPicfile(convertNullToEmpty(jsonObject
+					.getString("picfile")));
+			mStock.setPricecurr(convertNullToEmpty(jsonObject
+					.getString("pricecurr")));
+			mStock.setBrand(convertNullToEmpty(jsonObject.getString("brand")));
+			mStock.setCategory(convertNullToEmpty(jsonObject
+					.getString("category")));
+			mStock.setGbbarcode(convertNullToEmpty(jsonObject
+					.getString("gbbarcode")));
+			mStock.setOcbarcode(convertNullToEmpty(jsonObject
+					.getString("ocbarcode")));
+			mStock.setPbarcode(convertNullToEmpty(jsonObject
+					.getString("pbarcode")));
+			mStock.setSclass(convertNullToEmpty(jsonObject.getString("sclass")));
+			mStock.setSubclass(convertNullToEmpty(jsonObject
+					.getString("subclass")));
 			mStock.setAcvite(jsonObject.getBoolean("active"));
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

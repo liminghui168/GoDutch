@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView.OnScrollListener;
@@ -54,13 +55,13 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		
 		super.onCreate(savedInstanceState);
 		appendMainBody(R.layout.main_stock_body);
 		initVariable();
 		initView();
 		initListeners();
-		loadStockGrid();
+		// getStockListService();
 
 	}
 
@@ -82,7 +83,7 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 		 */
 
 		pageIndex = 1;
-		pageSize = 13;
+		pageSize = 14;
 		list = new ArrayList<Stock>();
 		// 加入到底部
 		// lv_stock_main_body_list.addFooterView(main_stock_body_more_view);
@@ -113,6 +114,10 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 							int position, long id) {
 						TextView tv_main_stock_body_id = (TextView) view
 								.findViewById(R.id.tv_main_stock_body_id);
+						// TextView tv_main_stock_body_brand = (TextView)
+						// view.findViewById(R.id.tv_main_stock_body_brand);
+						// tv_main_stock_body_brand.setBackgroundResource(R.color.green);
+
 						if (tv_main_stock_body_id != null) {
 							// showMsg(tv_main_stock_body_id.getText() + "");
 							Intent mIntent = new Intent();
@@ -170,7 +175,7 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 
 			@Override
 			public void run() {
-				loadStockGrid();
+				getStockListService();
 				pb_move_view_load.setVisibility(View.GONE);
 				bt_move_view_text.setVisibility(View.VISIBLE);
 				pb_move_view_load.setEnabled(true);
@@ -184,35 +189,53 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 		bt_move_view_text.setVisibility(View.VISIBLE);
 	}
 
-	private void loadStockGrid() {
-		getStockListService();
-		pageIndex++;
-	}
-
 	private void getStockListService() {
 		String path = getString(R.string.url_path) + "LoadList";
 		RequestParams params = new RequestParams();
 		params.put("pageIndex", pageIndex + "");
 		params.put("pageSize", pageSize + "");
+
 		AsyncHttpClient client = new AsyncHttpClient();
+		client.setTimeout(30000);
 
 		client.post(path, params, new AsyncHttpResponseHandler() {
+
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Toast.makeText(getApplicationContext(), "Loading Error", 1)
+						.show();
+				pb_stock_main_body.setVisibility(View.GONE);
+				super.onFailure(error, content);
+			}
 
 			@Override
 			public void onSuccess(String content) {
 				pb_stock_main_body.setVisibility(View.GONE);
 				parseJson(content);
 				mAdapter.setList(list);
-				if (pageIndex == 2) {
+				if (pageIndex == 1) {
 					bindData();
 				} else {
 					mAdapter.notifyDataSetChanged();
-					lv_stock_main_body_list.setSelection((mAdapter.getCount() / 2) - 5);
+					// lv_stock_main_body_list.setSelection((mAdapter.getCount()
+					// / 2) - 5);
 				}
-
+				Toast toast = Toast.makeText(getApplicationContext(),
+						"Loading Success", 0);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+				pageIndex++;
 				super.onSuccess(content);
 			}
 		});
+	}
+
+	@Override
+	protected void onResume() {
+		list.clear();
+		pageIndex = 1;
+		getStockListService();
+		super.onResume();
 	}
 
 	/**

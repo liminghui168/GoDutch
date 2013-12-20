@@ -13,7 +13,7 @@
             android:id="@+id/bt_move_view_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_marginTop="1dp"
             android:text="更多"
             android:textSize="18sp" />
 
@@ -40,7 +40,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/rl"
-        android:layout_below="@id/gv_stock_main_body_title" >
+        android:layout_below="@id/gv_stock_main_body_title"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@null"
+        android:fastScrollEnabled="true" >
     </ListView>
 
     <ProgressBar

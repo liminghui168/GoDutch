@@ -13,7 +13,14 @@
         <RelativeLayout
             android:id="@+id/lay_stock_detail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:layout_marginTop="3dp" >
+
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="0px"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -28,44 +35,58 @@
                     <Button
                         android:id="@+id/bt_stock_detail_add"
                         style="@style/stock_detail_top_bt_style"
-                        android:text="Add"
-                        android:textSize="18sp" />
+                        android:text="Add" />
 
                     <Button
                         android:id="@+id/bt_stock_detail_edit"
                         style="@style/stock_detail_top_bt_style"
-                        android:text="Edit"
-                        android:textSize="18sp" />
+                        android:text="Edit" />
 
                     <Button
                         android:id="@+id/bt_stock_detail_delete"
                         style="@style/stock_detail_top_bt_style"
-                        android:text="Delete"
-                        android:textSize="18sp" />
+                        android:text="Delete" />
 
                     <Button
                         android:id="@+id/bt_stock_detail_save"
                         style="@style/stock_detail_top_bt_style"
-                        android:text="Save"
-                        android:textSize="18sp" />
+                        android:text="Save" />
 
                     <Button
                         android:id="@+id/bt_stock_detail_undo"
                         style="@style/stock_detail_top_bt_style"
-                        android:text="Undo"
-                        android:textSize="18sp" />
+                        android:text="Undo" />
+
+                    <Button
+                        android:id="@+id/bt_stock_detail_first"
+                        style="@style/stock_detail_top_bt_style"
+                        android:text="First" />
+
+                    <Button
+                        android:id="@+id/bt_stock_detail_pre"
+                        style="@style/stock_detail_top_bt_style"
+                        android:layout_weight="1.1"
+                        android:text="Previous" />
+
+                    <Button
+                        android:id="@+id/bt_stock_detail_next"
+                        style="@style/stock_detail_top_bt_style"
+                        android:text="Next" />
+
+                    <Button
+                        android:id="@+id/bt_stock_detail_last"
+                        style="@style/stock_detail_top_bt_style"
+                        android:text="Last" />
 
                     <Button
                         android:id="@+id/bt_stock_detail_refresh"
                         style="@style/stock_detail_top_bt_style"
-                        android:text="Refresh"
-                        android:textSize="18sp" />
+                        android:text="Refresh" />
 
                     <Button
                         android:id="@+id/bt_stock_detail_close"
                         style="@style/stock_detail_top_bt_style"
-                        android:text="Close"
-                        android:textSize="18sp" />
+                        android:text="Close" />
                 </LinearLayout>
 
                 <View style="@style/view_devide_line_style" />
@@ -294,13 +315,15 @@
                             <Spinner
                                 android:id="@+id/sp_stock_detail_unit_price"
                                 android:layout_width="120dp"
-                                android:layout_height="40sp" />
+                                android:layout_height="40sp"
+                                android:clickable="false" />
 
                             <EditText
                                 android:id="@+id/et_stock_detail_unit_price"
                                 android:layout_width="fill_parent"
                                 android:layout_height="40sp"
                                 android:enabled="false"
+                                android:gravity="right"
                                 android:inputType="numberDecimal" />
                         </LinearLayout>
 
@@ -312,13 +335,15 @@
                             <Spinner
                                 android:id="@+id/sp_stock_detail_ref_cost"
                                 android:layout_width="120dp"
-                                android:layout_height="40sp" />
+                                android:layout_height="40sp"
+                                android:clickable="false" />
 
                             <EditText
                                 android:id="@+id/et_stcok_detail_ref_cost"
                                 android:layout_width="fill_parent"
                                 android:layout_height="40sp"
                                 android:enabled="false"
+                                android:gravity="right"
                                 android:inputType="numberDecimal" />
                         </LinearLayout>
 
@@ -331,11 +356,13 @@
 
                         <Spinner
                             android:id="@+id/sp_stock_detail_brand"
-                            style="@style/stock_detail_text_et_right_style" />
+                            style="@style/stock_detail_text_et_right_style"
+                            android:clickable="false" />
 
                         <Spinner
                             android:id="@+id/sp_stock_detail_category"
-                            style="@style/stock_detail_text_et_right_style" />
+                            style="@style/stock_detail_text_et_right_style"
+                            android:clickable="false" />
 
                         <EditText
                             android:id="@+id/et_stock_detail_gift"
@@ -354,11 +381,13 @@
 
                         <Spinner
                             android:id="@+id/sp_stock_detail_class"
-                            style="@style/stock_detail_text_et_right_style" />
+                            style="@style/stock_detail_text_et_right_style"
+                            android:clickable="false" />
 
                         <Spinner
                             android:id="@+id/sp_stock_detail_sub_class"
-                            style="@style/stock_detail_text_et_right_style" />
+                            style="@style/stock_detail_text_et_right_style"
+                            android:clickable="false" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -379,13 +408,34 @@
         android:id="@+id/stock_detail_lay_pic"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginTop="3dp"
         android:orientation="vertical" >
 
-        <AnalogClock
-            android:id="@+id/widget36"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-        </AnalogClock>
+        <com.loopj.android.image.SmartImageView
+            android:id="@+id/iv_stock_detail_viewer"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1000" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/bt_stock_detail_select_img"
+                android:layout_width="1dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="选择图片" />
+
+            <Button
+                android:id="@+id/bt_stock_detail_upload_img"
+                android:layout_width="1dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="上传图片" />
+        </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>

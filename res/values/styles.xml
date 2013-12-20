@@ -24,14 +24,14 @@
         <item name="android:cacheColorHint">@color/transparent</item>
     </style>
 
-    <style name="stock_item_text_style">
+    <style name="stock_item_text_style">      
         <item name="android:id">@+id/tv_main_stock_body_brand</item>
         <item name="android:layout_width">1dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">top</item>
         <item name="android:layout_margin">1dp</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:background">#D4D0C7</item>
+        <item name="android:background">@drawable/stock_item_bg</item>
         <item name="android:gravity">left</item>
         <item name="android:singleLine">true</item>
         <item name="android:text">test1</item>
