@@ -5,7 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,14 +18,17 @@ import org.json.JSONObject;
 import android.app.AlertDialog;
 import android.app.TabActivity;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -58,6 +63,8 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	protected static final int REQ_CODE_CAMERA = 100;
 
 	protected static final int REQ_CODE_PICTURE = 200;
+
+	private static final String FILE_PATH = "/temp";
 
 	private TabHost mTabHost;
 
@@ -124,6 +131,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	private int stockId;
 	private Stock mStock;
 	private Bitmap bmp;
+	private String filePath;
 
 	private boolean isAdd; // 是否为添加，true为添加
 
@@ -329,17 +337,64 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			byte[] buff = null;
 			iv_stock_detail_viewer.setDrawingCacheEnabled(true);
 			Bitmap bitmap = iv_stock_detail_viewer.getDrawingCache();
-			//TODO:上传图片，处理流
-			
+			// TODO:上传图片，处理流
+
 		}
 	}
-	
-	public InputStream Bitmap2InputStream(Bitmap bm)
-	{
-	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	    bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-	    InputStream is = new ByteArrayInputStream(baos.toByteArray());
-	    return is;
+
+	/**
+	 * 图片转换成文件流
+	 * @param bm
+	 * @return
+	 */
+	public InputStream Bitmap2InputStream(Bitmap bm) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+		InputStream is = new ByteArrayInputStream(baos.toByteArray());
+		return is;
+	}
+
+	/**
+	 * 图片转为文件
+	 * 
+	 * @param bmp
+	 *            图片
+	 * @return
+	 */
+	public static boolean saveBitmap2file(Bitmap bmp) {
+		CompressFormat format = Bitmap.CompressFormat.PNG;
+		int quality = 100;
+		OutputStream stream = null;
+		try {
+			// 判断SDcard状态
+			if (!Environment.MEDIA_MOUNTED.equals(Environment
+					.getExternalStorageState())) {
+				// 错误提示
+				return false;
+			}
+
+			// 检查SDcard空间
+			File SDCardRoot = Environment.getExternalStorageDirectory();
+			String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+			/*
+			 * if (SDCardRoot.getFreeSpace() < 10000) { // 弹出对话框提示用户空间不够
+			 * Log.e("Utils", "存储空间不够"); return false; }
+			 */
+			File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+			// 在SDcard创建文件夹及文件
+			String path2 = "/mnt/shell/emulated/0";
+			File bitmapFile = new File("/mnt/shell/emulated/");
+			if(!bitmapFile.exists()){
+				boolean result = bitmapFile.mkdir();
+				System.out.println(result);
+			}
+			//bitmapFile.getParentFile().mkdirs();// 创建文件夹
+			long current = System.currentTimeMillis();
+			stream = new FileOutputStream(FILE_PATH + "/" + current + ".png");// "/sdcard/"
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return bmp.compress(format, quality, stream);
 	}
 
 	/**
@@ -356,7 +411,34 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 								case 0: // 拍照
 									Intent i = new Intent(
 											MediaStore.ACTION_IMAGE_CAPTURE);
+									//i.putExtra(MediaStore.EXTRA_MEDIA_ALBUM,true);
 									startActivityForResult(i, REQ_CODE_CAMERA);
+
+									// ContentValues values = new
+									// ContentValues();
+									// Uri uriPath =
+									// getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+									// values);
+									// i.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,
+									// uriPath);
+									// startActivityForResult(i,
+									// REQ_CODE_CAMERA);
+
+									/*
+									 * Intent i = new Intent(
+									 * MediaStore.ACTION_IMAGE_CAPTURE);
+									 * 
+									 * long current =
+									 * System.currentTimeMillis(); File out =
+									 * new
+									 * File(Environment.getExternalStorageDirectory
+									 * (), "temp/camera.jpg"); Uri uri =
+									 * Uri.fromFile(out);
+									 * i.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+									 * startActivityForResult(i,
+									 * REQ_CODE_CAMERA);
+									 */
+
 									break;
 								case 1: // 选择本地图片
 									Intent intent = new Intent(
@@ -379,18 +461,30 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			switch (requestCode) {
 			case REQ_CODE_CAMERA:// 拍照
 				Bitmap camerabmp = (Bitmap) data.getExtras().get("data");
+				if(camerabmp!=null)
+					saveBitmap2file(camerabmp);
 				iv_stock_detail_viewer.setImageBitmap(camerabmp);
 				break;
 			case REQ_CODE_PICTURE:// 选择本地图片
 				// 选择图片
 				Uri uri = data.getData();
-				ContentResolver cr = this.getContentResolver();
+				// ContentResolver cr = this.getContentResolver();
+				// bmp = BitmapFactory.decodeStream(cr.openInputStream(uri));
+
+				String[] proj = { MediaStore.Images.Media.DATA };
+				Cursor cursor = this.managedQuery(uri, proj, null, null, null);
+
+				int column_index = cursor
+						.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+				cursor.moveToFirst();
+
+				String path = cursor.getString(column_index);
 				try {
 					if (bmp != null)// 如果不释放的话，不断取图片，将会内存不够
 						bmp.recycle();
-					bmp = BitmapFactory.decodeStream(cr.openInputStream(uri));
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
+					bmp = BitmapFactory.decodeFile(path);
+					filePath = path;
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
