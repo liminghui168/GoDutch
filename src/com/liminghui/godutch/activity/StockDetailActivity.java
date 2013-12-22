@@ -338,12 +338,17 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			iv_stock_detail_viewer.setDrawingCacheEnabled(true);
 			Bitmap bitmap = iv_stock_detail_viewer.getDrawingCache();
 			// TODO:上传图片，处理流
-
+			if (TextUtils.isEmpty(filePath)) {
+				//如果是选择本地照片上传
+			} else {
+				//如果是
+			}
 		}
 	}
 
 	/**
 	 * 图片转换成文件流
+	 * 
 	 * @param bm
 	 * @return
 	 */
@@ -352,49 +357,6 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 		InputStream is = new ByteArrayInputStream(baos.toByteArray());
 		return is;
-	}
-
-	/**
-	 * 图片转为文件
-	 * 
-	 * @param bmp
-	 *            图片
-	 * @return
-	 */
-	public static boolean saveBitmap2file(Bitmap bmp) {
-		CompressFormat format = Bitmap.CompressFormat.PNG;
-		int quality = 100;
-		OutputStream stream = null;
-		try {
-			// 判断SDcard状态
-			if (!Environment.MEDIA_MOUNTED.equals(Environment
-					.getExternalStorageState())) {
-				// 错误提示
-				return false;
-			}
-
-			// 检查SDcard空间
-			File SDCardRoot = Environment.getExternalStorageDirectory();
-			String path = Environment.getExternalStorageDirectory().getAbsolutePath();
-			/*
-			 * if (SDCardRoot.getFreeSpace() < 10000) { // 弹出对话框提示用户空间不够
-			 * Log.e("Utils", "存储空间不够"); return false; }
-			 */
-			File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-			// 在SDcard创建文件夹及文件
-			String path2 = "/mnt/shell/emulated/0";
-			File bitmapFile = new File("/mnt/shell/emulated/");
-			if(!bitmapFile.exists()){
-				boolean result = bitmapFile.mkdir();
-				System.out.println(result);
-			}
-			//bitmapFile.getParentFile().mkdirs();// 创建文件夹
-			long current = System.currentTimeMillis();
-			stream = new FileOutputStream(FILE_PATH + "/" + current + ".png");// "/sdcard/"
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return bmp.compress(format, quality, stream);
 	}
 
 	/**
@@ -411,7 +373,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 								case 0: // 拍照
 									Intent i = new Intent(
 											MediaStore.ACTION_IMAGE_CAPTURE);
-									//i.putExtra(MediaStore.EXTRA_MEDIA_ALBUM,true);
+									// i.putExtra(MediaStore.EXTRA_MEDIA_ALBUM,true);
 									startActivityForResult(i, REQ_CODE_CAMERA);
 
 									// ContentValues values = new
@@ -461,9 +423,8 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			switch (requestCode) {
 			case REQ_CODE_CAMERA:// 拍照
 				Bitmap camerabmp = (Bitmap) data.getExtras().get("data");
-				if(camerabmp!=null)
-					saveBitmap2file(camerabmp);
 				iv_stock_detail_viewer.setImageBitmap(camerabmp);
+				filePath = "";
 				break;
 			case REQ_CODE_PICTURE:// 选择本地图片
 				// 选择图片
