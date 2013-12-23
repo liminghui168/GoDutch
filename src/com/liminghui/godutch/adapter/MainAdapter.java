@@ -20,9 +20,10 @@ public class MainAdapter extends BaseAdapter {
 
 	private Integer[] images = { R.drawable.grid_payout, R.drawable.grid_bill,
 			R.drawable.grid_report, R.drawable.grid_account_book,
-			R.drawable.grid_category, R.drawable.grid_user, R.drawable.grid_stock};
+			R.drawable.grid_category, R.drawable.grid_user,
+			R.drawable.grid_stock, R.drawable.grid_two_dimensional_code };
 
-	private String[] names = new String[7];
+	private String[] names = new String[8];
 
 	private Context context;
 
@@ -35,6 +36,7 @@ public class MainAdapter extends BaseAdapter {
 		names[4] = this.context.getString(R.string.gv_category_manage);
 		names[5] = this.context.getString(R.string.gv_user_manage);
 		names[6] = this.context.getString(R.string.gv_stock_manage);
+		names[7] = this.context.getString(R.string.gv_scanning_code);
 	}
 
 	@Override
@@ -74,10 +76,11 @@ public class MainAdapter extends BaseAdapter {
 		}
 
 		holder.iv_item_icon.setImageResource(images[arg0]);
-		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(80, 80);
+		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+				80, 80);
 		holder.iv_item_icon.setLayoutParams(layoutParams);
 		holder.iv_item_icon.setScaleType(ImageView.ScaleType.FIT_XY);
-		
+
 		holder.tv_item_name.setText(names[arg0]);
 
 		return arg1;

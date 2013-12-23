@@ -404,22 +404,17 @@
     </ScrollView>
     <!-- 第二个页面 -->
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/stock_detail_lay_pic"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginTop="3dp"
-        android:orientation="vertical" >
-
-        <com.loopj.android.image.SmartImageView
-            android:id="@+id/iv_stock_detail_viewer"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1000" />
+        android:layout_marginTop="3dp" >
 
         <LinearLayout
+            android:id="@+id/lay_pic"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:orientation="horizontal" >
 
             <Button
@@ -434,8 +429,23 @@
                 android:layout_width="1dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="上传图片" />
+                android:text="上传图片"
+                android:visibility="gone" />
         </LinearLayout>
-    </LinearLayout>
+
+        <com.loopj.android.image.SmartImageView
+            android:id="@+id/iv_stock_detail_viewer"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/lay_pic" />
+
+        <ProgressBar
+            android:id="@+id/pb_stock_detail_pic_loading"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+    </RelativeLayout>
 
 </FrameLayout>

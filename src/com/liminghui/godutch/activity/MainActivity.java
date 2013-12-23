@@ -27,7 +27,7 @@ public class MainActivity extends FrameActivity implements
 		initView();
 		initListeners();
 		bindData();
-		createSlideMenu(R.array.SlideMenuActivityMain);
+		//createSlideMenu(R.array.SlideMenuActivityMain);
 	}
 
 	private void initVariable() {

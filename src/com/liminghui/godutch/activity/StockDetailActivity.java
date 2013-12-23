@@ -3,46 +3,46 @@ package com.liminghui.godutch.activity;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TabActivity;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TabWidget;
@@ -56,7 +56,6 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.image.SmartImageView;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class StockDetailActivity extends TabActivity implements OnClickListener {
 
@@ -64,7 +63,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 
 	protected static final int REQ_CODE_PICTURE = 200;
 
-	private static final String FILE_PATH = "/temp";
+	private static final int DATE_DIALOG = 1;
 
 	private TabHost mTabHost;
 
@@ -120,6 +119,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	private SmartImageView iv_stock_detail_viewer;
 	private Button bt_stock_detail_upload_img;
 	private Button bt_stock_detail_select_img;
+	private ProgressBar pb_stock_detail_pic_loading;
 
 	private String[] unitArr;// Unit数组
 	private String[] unitPriceArr;// Unit Price数组
@@ -132,6 +132,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	private Stock mStock;
 	private Bitmap bmp;
 	private String filePath;
+	 private Calendar mCalendar;
 
 	private boolean isAdd; // 是否为添加，true为添加
 
@@ -149,7 +150,8 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		stockId = mIntent.getIntExtra("stockId", 0);
 
 		pb_stock_detail_loading.setVisibility(View.VISIBLE);
-
+		//et_stock_detail_first_date.setInputType(InputType.TYPE_NULL);
+		
 		getStockService(DETAIL);
 		initTopBtnStatus();
 		initListeners();
@@ -174,8 +176,6 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 
 		TabWidget tabWidget = mTabHost.getTabWidget();
 		for (int i = 0; i < tabWidget.getChildCount(); i++) {
-			RelativeLayout tabView = (RelativeLayout) mTabHost.getTabWidget()
-					.getChildAt(i);
 
 			TextView text = (TextView) tabWidget.getChildAt(i).findViewById(
 					android.R.id.title);
@@ -252,6 +252,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		iv_stock_detail_viewer = (SmartImageView) findViewById(R.id.iv_stock_detail_viewer);
 		bt_stock_detail_upload_img = (Button) findViewById(R.id.bt_stock_detail_upload_img);
 		bt_stock_detail_select_img = (Button) findViewById(R.id.bt_stock_detail_select_img);
+		pb_stock_detail_pic_loading = (ProgressBar) findViewById(R.id.pb_stock_detail_pic_loading);
 	}
 
 	/**
@@ -267,7 +268,26 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		bt_stock_detail_pre.setOnClickListener(this);
 		bt_stock_detail_next.setOnClickListener(this);
 		bt_stock_detail_last.setOnClickListener(this);
+		
+		//et_stock_detail_first_date.setOnClickListener(this);
 
+		/**
+		 * 弹出选择日期对话框
+		 */
+		et_stock_detail_first_date.setOnTouchListener(new View.OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				 int inType = et_stock_detail_first_date.getInputType(); // backup the input type  
+				 et_stock_detail_first_date.setInputType(InputType.TYPE_NULL); // disable soft input      
+				 et_stock_detail_first_date.onTouchEvent(event); // call native handler      
+				 et_stock_detail_first_date.setInputType(inType); // restore input type     
+				 //et_stock_detail_first_date.setSelection(et_stock_detail_first_date.getText().length());  
+				 showDialog(DATE_DIALOG);
+				 return true;  
+			}
+		});
+		
 		bt_stock_detail_refresh.setOnClickListener(this);
 		bt_stock_detail_close.setOnClickListener(this);
 		bt_stock_detail_upload_img.setOnClickListener(this);
@@ -282,6 +302,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		switch (v.getId()) {
 		case R.id.bt_stock_detail_add: // 添加
 			isAdd = true;
+			stockId = 0;
 			setTopBtnInEdit();
 			setControlTextForEmpty();
 			setControlStatus(true);
@@ -325,24 +346,16 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			selectLoactionImg();
 			break;
 		case R.id.bt_stock_detail_upload_img: // 上传图片
+			// iv_stock_detail_viewer.setDrawingCacheEnabled(true);
+
+			// Bitmap bitmap = iv_stock_detail_viewer.getDrawingCache();
+			// iv_stock_detail_viewer.setDrawingCacheEnabled(false);
+
 			uploadImgService();
 			break;
-		}
-	}
-
-	private void uploadImgService() {
-		if (isAdd) {
-			return;
-		} else {
-			byte[] buff = null;
-			iv_stock_detail_viewer.setDrawingCacheEnabled(true);
-			Bitmap bitmap = iv_stock_detail_viewer.getDrawingCache();
-			// TODO:上传图片，处理流
-			if (TextUtils.isEmpty(filePath)) {
-				//如果是选择本地照片上传
-			} else {
-				//如果是
-			}
+		case R.id.et_stock_detail_first_date:
+			//showDialog(DATE_DIALOG);
+			break;
 		}
 	}
 
@@ -354,9 +367,33 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	 */
 	public InputStream Bitmap2InputStream(Bitmap bm) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+		bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
 		InputStream is = new ByteArrayInputStream(baos.toByteArray());
 		return is;
+	}
+	
+
+	
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog = null;
+		switch (id) {
+		case DATE_DIALOG:
+			mCalendar = Calendar.getInstance();
+			dialog = new DatePickerDialog(
+	                this,
+	                new DatePickerDialog.OnDateSetListener() {
+	                    public void onDateSet(DatePicker dp, int year,int month, int dayOfMonth) {
+	                    	et_stock_detail_first_date.setText( year + "-" + (month+1) + "-" + dayOfMonth);
+	                    }
+	                }, 
+	                mCalendar.get(Calendar.YEAR), // 传入年份
+	                mCalendar.get(Calendar.MONTH), // 传入月份
+	                mCalendar.get(Calendar.DAY_OF_MONTH) // 传入天数
+	            );
+			break;
+		}
+		return dialog;
 	}
 
 	/**
@@ -423,7 +460,16 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			switch (requestCode) {
 			case REQ_CODE_CAMERA:// 拍照
 				Bitmap camerabmp = (Bitmap) data.getExtras().get("data");
-				iv_stock_detail_viewer.setImageBitmap(camerabmp);
+
+				Matrix matrix = new Matrix();
+				matrix.reset();
+				matrix.postScale(1, -1); // 镜像垂直翻转
+				matrix.postRotate(-180); // 旋转-90度
+				Bitmap bMapRotate = Bitmap.createBitmap(camerabmp, 0, 0,
+						camerabmp.getWidth(), camerabmp.getHeight(), matrix,
+						true);
+				bmp = bMapRotate;
+				iv_stock_detail_viewer.setImageBitmap(bMapRotate);
 				filePath = "";
 				break;
 			case REQ_CODE_PICTURE:// 选择本地图片
@@ -506,7 +552,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	}
 
 	/**
-	 * 获取控制设置的值
+	 * 获取控件设置的值
 	 * 
 	 * @return
 	 */
@@ -639,6 +685,15 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			}
 		}
 
+		if (TextUtils.isEmpty(mStock.getPicfile())) {
+			iv_stock_detail_viewer.setImageBitmap(null);
+		} else {
+			String picFilePath = getString(R.string.url_path_img) + "Images/"
+					+ mStock.getPicfile();
+
+			iv_stock_detail_viewer.setImageUrl(picFilePath);
+		}
+
 	}
 
 	/**
@@ -671,7 +726,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		et_stock_detail_product.setText("");
 		sp_stock_detail_class.setSelection(0);
 		sp_stock_detail_sub_class.setSelection(0);
-
+		iv_stock_detail_viewer.setImageBitmap(null);
 	}
 
 	/**
@@ -702,6 +757,8 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		bt_stock_detail_last.setEnabled(true);
 		bt_stock_detail_refresh.setEnabled(true);
 		bt_stock_detail_close.setEnabled(true);
+		bt_stock_detail_select_img.setEnabled(false);
+		bt_stock_detail_upload_img.setEnabled(false);
 	}
 
 	/**
@@ -721,6 +778,8 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		bt_stock_detail_last.setEnabled(flag);
 		bt_stock_detail_refresh.setEnabled(flag);
 		bt_stock_detail_close.setEnabled(flag);
+		bt_stock_detail_select_img.setEnabled(flag);
+		bt_stock_detail_upload_img.setEnabled(flag);
 	}
 
 	/**
@@ -738,6 +797,9 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		bt_stock_detail_last.setEnabled(false);
 		bt_stock_detail_refresh.setEnabled(false);
 		bt_stock_detail_close.setEnabled(false);
+		bt_stock_detail_select_img.setEnabled(true);
+		bt_stock_detail_upload_img.setEnabled(true);
+		
 	}
 
 	/**
@@ -781,9 +843,6 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				/*
-				 * if (isAdd) { initTopBtnStatus(); getStockService(DETAIL); }
-				 */
 				dialog.dismiss();
 			}
 		});
@@ -813,9 +872,6 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				/*
-				 * if (isAdd) { initTopBtnStatus(); getStockService(DETAIL); }
-				 */
 				dialog.dismiss();
 			}
 		});
@@ -879,13 +935,14 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 				if ("null".equals(content)) {
 					// 数据为空
 				} else if ("isFirst".equals(content)) {
-					Toast.makeText(getApplicationContext(), "已经是第一条！", 0)
-							.show();
+					Toast.makeText(getApplicationContext(),
+							"It is already the first record！", 0).show();
 				} else if ("isLast".equals(content)) {
-					Toast.makeText(getApplicationContext(), "已经是最后一条！", 0)
-							.show();
+					Toast.makeText(getApplicationContext(),
+							"It is already the last record！", 0).show();
 				} else if ("ok".equals(content)) {
-					Toast.makeText(getApplicationContext(), "删除成功！", 0).show();
+					Toast.makeText(getApplicationContext(), "Delete Success！",
+							0).show();
 					getStockService(NEXT);
 				} else {
 					parseJson(content);
@@ -899,17 +956,81 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	}
 
 	/**
+	 * 上传图片到服务器
+	 */
+	private void uploadImgService() {
+		if (isAdd) {
+			return;
+		} else {
+			pb_stock_detail_pic_loading.setVisibility(View.VISIBLE);
+			String url = getString(R.string.url_path) + "UpdataLoadImg";
+			AsyncHttpClient client = new AsyncHttpClient();
+			RequestParams params = new RequestParams();
+			params.put("stockId", stockId + "");
+
+			client.setTimeout(30000);
+			client.post(url, params, new AsyncHttpResponseHandler() {
+
+				@Override
+				public void onFailure(Throwable error, String content) {
+					Toast.makeText(getApplicationContext(), "Upload Failed", 0)
+							.show();
+					pb_stock_detail_pic_loading.setVisibility(View.GONE);
+					super.onFailure(error, content);
+				}
+
+				@Override
+				public void onSuccess(int statusCode, String content) {
+					if (content.equals("up_success")) {
+						Toast.makeText(getApplicationContext(),
+								"Upload Success", 0).show();
+					} else if (content.equals("up_error")) {
+						Toast.makeText(getApplicationContext(),
+								"Upload Failed", 0).show();
+					}
+					pb_stock_detail_pic_loading.setVisibility(View.GONE);
+					super.onSuccess(statusCode, content);
+				}
+
+			});
+		}
+	}
+
+	/**
 	 * 保存StockDetail
 	 * 
 	 * @param json
 	 */
 	private void saveStockDetail(String json) {
 		pb_stock_detail_loading.setVisibility(View.VISIBLE);
+		String url;
+		if (isAdd) {
+			url = getString(R.string.url_path) + "AddStockDetail";
+		} else {
+			url = getString(R.string.url_path) + "UpdateStockDetail";
+		}
 
-		String url = getString(R.string.url_path) + "UpdateStockDetail";
 		AsyncHttpClient client = new AsyncHttpClient();
 		RequestParams params = new RequestParams();
 		params.put("stockJson", json);
+
+		if (bmp != null) {
+			if (TextUtils.isEmpty(filePath)) {
+				// 如果是拍照上传
+				long fileName = System.currentTimeMillis();
+				params.put("file", Bitmap2InputStream(bmp), fileName + ".png");
+
+			} else {
+				// 如果是选择本地照片上传
+				File file = new File(filePath);
+				try {
+					params.put("file", file);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
 		client.setTimeout(30000);
 		setTopBtnToFalse(false);// 设置顶部按钮全部不可用
 		setControlStatus(false);// 设置文本框全部不可用
@@ -919,7 +1040,16 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			public void onFailure(Throwable error, String content) {
 				initTopBtnStatus();
 				getStockService(DETAIL);
-				Toast.makeText(getApplicationContext(), "Edit Error", 0).show();
+				if (content.equals("ok")) {
+					if (isAdd) {
+						Toast.makeText(getApplicationContext(), "Add Error", 0)
+								.show();
+					} else {
+						Toast.makeText(getApplicationContext(), "Edit Error", 0)
+								.show();
+					}
+				}
+
 				pb_stock_detail_loading.setVisibility(View.GONE);
 				super.onFailure(error, content);
 
@@ -928,8 +1058,14 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			@Override
 			public void onSuccess(String content) {
 				if (content.equals("ok")) {
-					Toast.makeText(getApplicationContext(), "Edit Success", 0)
-							.show();
+					if (isAdd) {
+						Toast.makeText(getApplicationContext(), "Add Success",
+								0).show();
+					} else {
+						Toast.makeText(getApplicationContext(), "Edit Success",
+								0).show();
+					}
+
 					initTopBtnStatus();
 					setControlStatus(false);
 				}

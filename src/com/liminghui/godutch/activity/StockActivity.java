@@ -55,7 +55,7 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
 		appendMainBody(R.layout.main_stock_body);
 		initVariable();
@@ -194,6 +194,10 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 		RequestParams params = new RequestParams();
 		params.put("pageIndex", pageIndex + "");
 		params.put("pageSize", pageSize + "");
+
+		if (pb_stock_main_body.getVisibility() == View.GONE) {
+			pb_stock_main_body.setVisibility(View.VISIBLE);
+		}
 
 		AsyncHttpClient client = new AsyncHttpClient();
 		client.setTimeout(30000);
