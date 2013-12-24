@@ -27,7 +27,7 @@ public class MainActivity extends FrameActivity implements
 		initView();
 		initListeners();
 		bindData();
-		//createSlideMenu(R.array.SlideMenuActivityMain);
+		// createSlideMenu(R.array.SlideMenuActivityMain);
 	}
 
 	private void initVariable() {
@@ -60,6 +60,9 @@ public class MainActivity extends FrameActivity implements
 		if (menuName.equals(getString(R.string.gv_stock_manage))) {
 			// showMsg("aaa");
 			openActivity(StockActivity.class);
+			return;
+		} else if (menuName.equals(getString(R.string.gv_scanning_code))) {
+			openActivity(BarcodeActivity.class);
 			return;
 		}
 	}

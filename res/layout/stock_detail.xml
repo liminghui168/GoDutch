@@ -198,9 +198,23 @@
                             android:gravity="top"
                             android:lines="3" />
 
-                        <EditText
-                            android:id="@+id/et_stock_detail_vendor_model_no"
-                            style="@style/stock_detail_text_et_style" />
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" >
+
+                            <EditText
+                                android:id="@+id/et_stock_detail_vendor_model_no"
+                                style="@style/stock_detail_text_et_style"
+                                android:layout_width="200dp" />
+
+                            <Button
+                                android:id="@+id/bt_stock_detail_find_vendor_model_no"
+                                android:layout_width="wrap_content"
+                                android:layout_height="40sp"
+                                android:layout_marginLeft="5dp"
+                                android:text="Scanning" />
+                        </LinearLayout>
 
                         <EditText
                             android:id="@+id/et_stock_detail_des"
@@ -422,7 +436,7 @@
                 android:layout_width="1dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="选择图片" />
+                android:text="Choose picture" />
 
             <Button
                 android:id="@+id/bt_stock_detail_upload_img"

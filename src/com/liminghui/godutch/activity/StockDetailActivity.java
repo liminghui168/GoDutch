@@ -132,7 +132,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	private Stock mStock;
 	private Bitmap bmp;
 	private String filePath;
-	 private Calendar mCalendar;
+	private Calendar mCalendar;
 
 	private boolean isAdd; // 是否为添加，true为添加
 
@@ -150,8 +150,8 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		stockId = mIntent.getIntExtra("stockId", 0);
 
 		pb_stock_detail_loading.setVisibility(View.VISIBLE);
-		//et_stock_detail_first_date.setInputType(InputType.TYPE_NULL);
-		
+		// et_stock_detail_first_date.setInputType(InputType.TYPE_NULL);
+
 		getStockService(DETAIL);
 		initTopBtnStatus();
 		initListeners();
@@ -268,26 +268,37 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		bt_stock_detail_pre.setOnClickListener(this);
 		bt_stock_detail_next.setOnClickListener(this);
 		bt_stock_detail_last.setOnClickListener(this);
-		
-		//et_stock_detail_first_date.setOnClickListener(this);
+
+		// et_stock_detail_first_date.setOnClickListener(this);
 
 		/**
 		 * 弹出选择日期对话框
 		 */
-		et_stock_detail_first_date.setOnTouchListener(new View.OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				 int inType = et_stock_detail_first_date.getInputType(); // backup the input type  
-				 et_stock_detail_first_date.setInputType(InputType.TYPE_NULL); // disable soft input      
-				 et_stock_detail_first_date.onTouchEvent(event); // call native handler      
-				 et_stock_detail_first_date.setInputType(inType); // restore input type     
-				 //et_stock_detail_first_date.setSelection(et_stock_detail_first_date.getText().length());  
-				 showDialog(DATE_DIALOG);
-				 return true;  
-			}
-		});
-		
+		et_stock_detail_first_date
+				.setOnTouchListener(new View.OnTouchListener() {
+
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						int inType = et_stock_detail_first_date.getInputType(); // backup
+																				// the
+																				// input
+																				// type
+						et_stock_detail_first_date
+								.setInputType(InputType.TYPE_NULL); // disable
+																	// soft
+																	// input
+						et_stock_detail_first_date.onTouchEvent(event); // call
+																		// native
+																		// handler
+						et_stock_detail_first_date.setInputType(inType); // restore
+																			// input
+																			// type
+						// et_stock_detail_first_date.setSelection(et_stock_detail_first_date.getText().length());
+						showDialog(DATE_DIALOG);
+						return true;
+					}
+				});
+
 		bt_stock_detail_refresh.setOnClickListener(this);
 		bt_stock_detail_close.setOnClickListener(this);
 		bt_stock_detail_upload_img.setOnClickListener(this);
@@ -354,7 +365,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			uploadImgService();
 			break;
 		case R.id.et_stock_detail_first_date:
-			//showDialog(DATE_DIALOG);
+			// showDialog(DATE_DIALOG);
 			break;
 		}
 	}
@@ -371,26 +382,24 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		InputStream is = new ByteArrayInputStream(baos.toByteArray());
 		return is;
 	}
-	
 
-	
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		Dialog dialog = null;
 		switch (id) {
 		case DATE_DIALOG:
 			mCalendar = Calendar.getInstance();
-			dialog = new DatePickerDialog(
-	                this,
-	                new DatePickerDialog.OnDateSetListener() {
-	                    public void onDateSet(DatePicker dp, int year,int month, int dayOfMonth) {
-	                    	et_stock_detail_first_date.setText( year + "-" + (month+1) + "-" + dayOfMonth);
-	                    }
-	                }, 
-	                mCalendar.get(Calendar.YEAR), // 传入年份
-	                mCalendar.get(Calendar.MONTH), // 传入月份
-	                mCalendar.get(Calendar.DAY_OF_MONTH) // 传入天数
-	            );
+			dialog = new DatePickerDialog(this,
+					new DatePickerDialog.OnDateSetListener() {
+						public void onDateSet(DatePicker dp, int year,
+								int month, int dayOfMonth) {
+							et_stock_detail_first_date.setText(year + "-"
+									+ (month + 1) + "-" + dayOfMonth);
+						}
+					}, mCalendar.get(Calendar.YEAR), // 传入年份
+					mCalendar.get(Calendar.MONTH), // 传入月份
+					mCalendar.get(Calendar.DAY_OF_MONTH) // 传入天数
+			);
 			break;
 		}
 		return dialog;
@@ -401,7 +410,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	 */
 	private void selectLoactionImg() {
 		new AlertDialog.Builder(this)
-				.setTitle("选择图片")
+				.setTitle("Choose picture")
 				.setItems(R.array.gallery_camera_icon,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
@@ -584,11 +593,25 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		s.setUnit(sp_stock_detail_unit.getSelectedItem().toString().trim());
 		s.setPricecurr(sp_stock_detail_unit_price.getSelectedItem().toString()
 				.trim());
-		s.setPrice(Double.parseDouble(et_stock_detail_unit_price.getText()
-				.toString().trim()));
+
+		if (TextUtils.isEmpty(et_stock_detail_unit_price.getText().toString()
+				.trim())) {
+			s.setPrice(0.0);
+		} else {
+			s.setPrice(Double.parseDouble(et_stock_detail_unit_price.getText()
+					.toString().trim()));
+		}
+
 		s.setCostcurr(sp_stock_detail_ref_cost.getSelectedItem().toString());
-		s.setCost(Double.parseDouble(et_stcok_detail_ref_cost.getText()
-				.toString().trim()));
+
+		if (TextUtils.isEmpty(et_stcok_detail_ref_cost.getText().toString()
+				.trim())) {
+			s.setCost(0.0);
+		} else {
+			s.setCost(Double.parseDouble(et_stcok_detail_ref_cost.getText()
+					.toString().trim()));
+		}
+
 		String createData = et_stock_detail_first_date.getText().toString()
 				.trim();
 		if (TextUtils.isEmpty(createData)) {
@@ -799,7 +822,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		bt_stock_detail_close.setEnabled(false);
 		bt_stock_detail_select_img.setEnabled(true);
 		bt_stock_detail_upload_img.setEnabled(true);
-		
+
 	}
 
 	/**
@@ -807,16 +830,16 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	 */
 	private void showConfirmDialog(final String json) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("提示信息");
-		builder.setMessage("确认要保存吗？");
-		builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+		builder.setTitle("Question");
+		builder.setMessage("Are you sure you want to save this file？");
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				saveStockDetail(json);
 				dialog.dismiss();
 			}
 		});
-		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -831,15 +854,15 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	 */
 	private void shwoDeleteDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("提示信息");
-		builder.setMessage("确认要取消吗？");
-		builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+		builder.setTitle("Question");
+		builder.setMessage("Are you sure you want to undo this operation？");
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				getStockService(DELETE);
 			}
 		});
-		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -854,9 +877,9 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	 */
 	private void showCancelDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("提示信息");
-		builder.setMessage("确认要取消吗？");
-		builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+		builder.setTitle("Question");
+		builder.setMessage("Are you sure you want to delete this record？");
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				initTopBtnStatus();
@@ -868,7 +891,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 				dialog.dismiss();
 			}
 		});
-		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -1002,6 +1025,38 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	 * @param json
 	 */
 	private void saveStockDetail(String json) {
+		String vendorCode = et_stock_detail_vendor_code.getText().toString()
+				.trim();
+		String vendorModelNo = et_stock_detail_vendor_model_no.getText()
+				.toString().trim();
+		String description = et_stock_detail_des.getText().toString().trim();
+		String firstDate = et_stock_detail_first_date.getText().toString()
+				.trim();
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Information").setPositiveButton("OK", null);
+
+		if (TextUtils.isEmpty(vendorCode)) {
+			builder.setMessage("Vendor is not exist").show();
+			et_stock_detail_vendor_code.setFocusable(true);
+			et_stock_detail_vendor_code.requestFocus();
+			return;
+		} else if (TextUtils.isEmpty(vendorModelNo)) {
+			builder.setMessage("Vendor's Model No. can't be empty").show();
+			et_stock_detail_vendor_model_no.setFocusable(true);
+			et_stock_detail_vendor_model_no.requestFocus();
+			return;
+		} else if (TextUtils.isEmpty(description)) {
+			builder.setMessage("Des can't be empty").show();
+			et_stock_detail_des.setFocusable(true);
+			et_stock_detail_des.requestFocus();
+			return;
+		} else if (TextUtils.isEmpty(firstDate)) {
+			builder.setMessage("First Date can't be empty").show();
+			et_stock_detail_first_date.setFocusable(true);
+			et_stock_detail_first_date.requestFocus();
+			return;
+		}
+
 		pb_stock_detail_loading.setVisibility(View.VISIBLE);
 		String url;
 		if (isAdd) {
@@ -1057,15 +1112,23 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 
 			@Override
 			public void onSuccess(String content) {
-				if (content.equals("ok")) {
+				int result = 0;
+				try {
+					result = Integer.valueOf(content);
+				} catch (Exception e) {
+					result = 0;
+				}
+
+				if (result > 0) {
 					if (isAdd) {
+
 						Toast.makeText(getApplicationContext(), "Add Success",
 								0).show();
 					} else {
 						Toast.makeText(getApplicationContext(), "Edit Success",
 								0).show();
 					}
-
+					stockId = result;
 					initTopBtnStatus();
 					setControlStatus(false);
 				}

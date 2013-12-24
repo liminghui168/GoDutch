@@ -18,25 +18,37 @@ public class MainAdapter extends BaseAdapter {
 		TextView tv_item_name;
 	}
 
-	private Integer[] images = { R.drawable.grid_payout, R.drawable.grid_bill,
-			R.drawable.grid_report, R.drawable.grid_account_book,
-			R.drawable.grid_category, R.drawable.grid_user,
-			R.drawable.grid_stock, R.drawable.grid_two_dimensional_code };
+	private Integer[] images = { R.drawable.grid_stock,
+			R.drawable.grid_two_dimensional_code };
 
-	private String[] names = new String[8];
+	/*
+	 * private Integer[] images = { R.drawable.grid_payout,
+	 * R.drawable.grid_bill, R.drawable.grid_report,
+	 * R.drawable.grid_account_book, R.drawable.grid_category,
+	 * R.drawable.grid_user, R.drawable.grid_stock,
+	 * R.drawable.grid_two_dimensional_code };
+	 */
+
+	private String[] names = new String[2];
 
 	private Context context;
 
 	public MainAdapter(Context context) {
 		this.context = context;
-		names[0] = this.context.getString(R.string.gv_payout_add);
-		names[1] = this.context.getString(R.string.gv_payout_query);
-		names[2] = this.context.getString(R.string.gv_statistics_manage);
-		names[3] = this.context.getString(R.string.gv_accountbook_manage);
-		names[4] = this.context.getString(R.string.gv_category_manage);
-		names[5] = this.context.getString(R.string.gv_user_manage);
-		names[6] = this.context.getString(R.string.gv_stock_manage);
-		names[7] = this.context.getString(R.string.gv_scanning_code);
+
+		names[0] = this.context.getString(R.string.gv_stock_manage);
+		names[1] = this.context.getString(R.string.gv_scanning_code);
+
+		/*
+		 * names[0] = this.context.getString(R.string.gv_payout_add); names[1] =
+		 * this.context.getString(R.string.gv_payout_query); names[2] =
+		 * this.context.getString(R.string.gv_statistics_manage); names[3] =
+		 * this.context.getString(R.string.gv_accountbook_manage); names[4] =
+		 * this.context.getString(R.string.gv_category_manage); names[5] =
+		 * this.context.getString(R.string.gv_user_manage); names[6] =
+		 * this.context.getString(R.string.gv_stock_manage); names[7] =
+		 * this.context.getString(R.string.gv_scanning_code);
+		 */
 	}
 
 	@Override

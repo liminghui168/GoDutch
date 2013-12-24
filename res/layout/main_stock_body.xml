@@ -14,7 +14,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
-            android:text="更多"
+            android:text="More"
             android:textSize="18sp" />
 
         <ProgressBar
