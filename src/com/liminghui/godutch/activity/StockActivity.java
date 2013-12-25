@@ -195,9 +195,9 @@ public class StockActivity extends FrameActivity implements OnItemClickListener 
 		params.put("pageIndex", pageIndex + "");
 		params.put("pageSize", pageSize + "");
 
-		if (pb_stock_main_body.getVisibility() == View.GONE) {
+		/*if (pb_stock_main_body.getVisibility() == View.GONE) {
 			pb_stock_main_body.setVisibility(View.VISIBLE);
-		}
+		}*/
 
 		AsyncHttpClient client = new AsyncHttpClient();
 		client.setTimeout(30000);

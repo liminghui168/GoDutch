@@ -153,7 +153,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		// et_stock_detail_first_date.setInputType(InputType.TYPE_NULL);
 
 		getStockService(DETAIL);
-		initTopBtnStatus();
+		//initTopBtnStatus();
 		initListeners();
 	}
 
@@ -905,6 +905,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	 * 获取远程服务StockDetail
 	 */
 	private void getStockService(int loadFlag) {
+		setTopBtnToFalse(false);
 		String path = getString(R.string.url_path) + "LoadStockDetail/"
 				+ stockId;
 
@@ -949,6 +950,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			public void onFailure(Throwable error, String content) {
 				Toast.makeText(getApplicationContext(), "Loading Error", 0)
 						.show();
+				initTopBtnStatus();
 				pb_stock_detail_loading.setVisibility(View.GONE);
 				super.onFailure(error, content);
 			}
@@ -971,6 +973,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 					parseJson(content);
 					setControlTextForEntity();
 				}
+				initTopBtnStatus();
 				pb_stock_detail_loading.setVisibility(View.GONE);
 				super.onSuccess(content);
 			}
