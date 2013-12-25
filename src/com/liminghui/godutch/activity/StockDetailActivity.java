@@ -153,7 +153,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		// et_stock_detail_first_date.setInputType(InputType.TYPE_NULL);
 
 		getStockService(DETAIL);
-		//initTopBtnStatus();
+		// initTopBtnStatus();
 		initListeners();
 	}
 
@@ -855,7 +855,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	private void shwoDeleteDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Question");
-		builder.setMessage("Are you sure you want to undo this operation？");
+		builder.setMessage("Are you sure you want to delete this record？");
 		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -878,7 +878,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 	private void showCancelDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Question");
-		builder.setMessage("Are you sure you want to delete this record？");
+		builder.setMessage("Are you sure you want to undo this operation？");
 		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -933,7 +933,8 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			break;
 
 		case DELETE:// 删除
-			path = getString(R.string.url_path) + "LoadStockDetailLast";
+			path = getString(R.string.url_path) + "DeleteStockDetail/"
+					+ stockId;
 			break;
 		}
 
@@ -969,6 +970,10 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 					Toast.makeText(getApplicationContext(), "Delete Success！",
 							0).show();
 					getStockService(NEXT);
+				} else if ("DeleteLast".equals(content)) {
+					Toast.makeText(getApplicationContext(), "Delete Success！",
+							0).show();
+					getStockService(LAST);
 				} else {
 					parseJson(content);
 					setControlTextForEntity();

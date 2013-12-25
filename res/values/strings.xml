@@ -15,6 +15,6 @@
 	<string name="gv_stock_manage">Stock Master</string>
 	<string name="gv_scanning_code">Scanning Barcode</string>
 	<!-- http://192.168.23.90/Stock/ http://192.168.1.101/GotchServer.Portal  -->
-	<string name="url_path_img">http://192.168.23.84/</string>
-	<string name="url_path">http://192.168.23.84/Stock/</string>
+	<string name="url_path_img">http://192.168.23.10:8012/</string>
+ 	<string name="url_path">http://192.168.23.10:8012/Stock/</string>
 </resources>
