@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -711,9 +713,14 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 		if (TextUtils.isEmpty(mStock.getPicfile())) {
 			iv_stock_detail_viewer.setImageBitmap(null);
 		} else {
-			String picFilePath = getString(R.string.url_path_img) + "Images/"
-					+ mStock.getPicfile();
+			String picFilePath = getString(R.string.url_path_img) + "Images/";
 
+			try {
+				picFilePath +=URLEncoder.encode(mStock.getPicfile(),"UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				
+			}
+			
 			iv_stock_detail_viewer.setImageUrl(picFilePath);
 		}
 
@@ -883,9 +890,10 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				initTopBtnStatus();
-				if (isAdd) {
-					getStockService(DETAIL);
-				}
+				//if (isAdd) {
+					
+				//}
+				getStockService(DETAIL);
 				setControlStatus(false);
 
 				dialog.dismiss();

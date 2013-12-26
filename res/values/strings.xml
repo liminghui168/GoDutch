@@ -17,4 +17,6 @@
 	<!-- http://192.168.23.90/Stock/ http://192.168.1.101/GotchServer.Portal  -->
 	<string name="url_path_img">http://192.168.23.10:8012/</string>
  	<string name="url_path">http://192.168.23.10:8012/Stock/</string>
+ 	<!-- <string name="url_path_img">http://192.168.23.90/GotchServer.Portal/</string>
+ 	<string name="url_path">http://192.168.23.90/GotchServer.Portal/Stock/</string> -->
 </resources>
