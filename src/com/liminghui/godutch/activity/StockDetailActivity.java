@@ -716,11 +716,11 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			String picFilePath = getString(R.string.url_path_img) + "Images/";
 
 			try {
-				picFilePath +=URLEncoder.encode(mStock.getPicfile(),"UTF-8");
+				picFilePath += URLEncoder.encode(mStock.getPicfile(), "UTF-8");
 			} catch (UnsupportedEncodingException e) {
-				
+
 			}
-			
+
 			iv_stock_detail_viewer.setImageUrl(picFilePath);
 		}
 
@@ -890,10 +890,12 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				initTopBtnStatus();
-				//if (isAdd) {
-					
-				//}
+				if (isAdd) {
+					stockId = mStock.getId();
+
+				}
 				getStockService(DETAIL);
+
 				setControlStatus(false);
 
 				dialog.dismiss();
@@ -903,6 +905,7 @@ public class StockDetailActivity extends TabActivity implements OnClickListener 
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+
 				dialog.dismiss();
 			}
 		});
